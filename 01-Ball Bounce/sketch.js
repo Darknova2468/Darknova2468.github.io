@@ -7,6 +7,7 @@ let player, credit, pos, d, time;
 let points = 0;
 let state = 0;
 let timer = 10;
+let highscore = 0;
 
 function setup() {
   //draws canvas
@@ -58,6 +59,14 @@ function draw() {
   else {
     //draws end screen
     endScreen();
+    if(keyIsDown(32)) {
+      state = 0;
+      timer = 10;
+      time = 0;
+      points = 0;
+      player.setPosition([width / 2, 15]);
+      credit.setPosition([width / 2, height / 2]);
+    }
   }
 
   //updates the players position
@@ -69,6 +78,9 @@ function draw() {
     points += 1;
     state = 1;
   }
+
+  textAlign("left");
+  text("HighScore: " + highscore, 25, 40);
 
   //draws the player and credit
   circle(pos[0], height - pos[1], player.getRadius() * 2 - 2);
@@ -89,14 +101,6 @@ function mouseReleased() {
       j * d * Math.abs(cos(slope)),
     ]);
   } 
-  else {
-    state = 0;
-    timer = 10;
-    time = 0;
-    points = 0;
-    player.setPosition([width / 2, 15]);
-    credit.setPosition([width / 2, height / 2]);
-  }
 }
 
 //draws start screen
@@ -112,12 +116,13 @@ function startScreen() {
 
 //draws end screen
 function endScreen() {
+  highscore = points>highscore ? points:highscore;
   textSize(50);
   textAlign(CENTER);
   text("TIMES UP", width / 2, height / 2 - 25);
   textSize(20);
   text(
-    "Press to Play Again \n \n Your Score \n" + points + " points",
+    "Press SPACE to Play Again \n \n Your Score \n" + points + " points",
     width / 2,
     height / 2
   );
@@ -125,6 +130,7 @@ function endScreen() {
 
 //draws UI
 function drawUI() {
+  textAlign("right");
   text("Points: " + points, 375, 40);
   text(Math.round(timer - (millis() - time) / 1000) + "s", 375, 65);
 }
