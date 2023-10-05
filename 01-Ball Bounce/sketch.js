@@ -65,16 +65,16 @@ function draw() {
       time = 0;
       points = 0;
       player.setPosition([width / 2, 15]);
-      credit.setPosition([width / 2, height / 2]);
+      credit.pos = [width / 2, height / 2];
     }
   }
 
   //updates the players position
   pos = player.updatePos(1 / 60);
-  let creditpos = credit.getPosition();
+  let creditpos = credit.pos;
 
   //checks if you got a point
-  if (credit.checkCollision(pos, player.getRadius())) {
+  if (credit.checkCollision(pos, player.radius)) {
     points += 1;
     state = 1;
   }
@@ -83,8 +83,8 @@ function draw() {
   text("HighScore: " + highscore, 25, 40);
 
   //draws the player and credit
-  circle(pos[0], height - pos[1], player.getRadius() * 2 - 2);
-  circle(creditpos[0], height - creditpos[1], credit.getRadius() * 2 - 2);
+  circle(pos[0], height - pos[1], player.radius * 2 - 2);
+  circle(creditpos[0], height - creditpos[1], credit.radius * 2 - 2);
 }
 
 function mouseReleased() {

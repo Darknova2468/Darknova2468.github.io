@@ -4,14 +4,6 @@ class coin {
     this.pos = _pos;
     this.radius = _r;
   }
-  //gets the position of the coin
-  getPosition() {
-    return this.pos;
-  }
-  //gets the radius of the coin
-  getRadius() {
-    return this.radius;
-  }
   //checks the collision of the coin and gives it a new position
   checkCollision(_point, _r) {
     if (
@@ -22,9 +14,5 @@ class coin {
       return true;
     }
     return false;
-  }
-  //allows you to reset a defined position
-  setPosition(_pos) {
-    this.pos = _pos;
   }
 }

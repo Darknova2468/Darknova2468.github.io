@@ -68,14 +68,6 @@ class ball {
     }
     return this.pos;
   }
-  //gets the radius of the ball
-  getRadius() {
-    return this.radius;
-  }
-  //gets the velocity of the ball
-  getVelocity() {
-    return this.velocity;
-  }
   //updates the velocity of the ball
   updateVelocity(velocity) {
     for (let i = 0; i < this.velocity.length; i++) {
