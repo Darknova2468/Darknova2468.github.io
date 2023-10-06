@@ -15,20 +15,23 @@ class ball {
     for(let i=0; i<2; i++){
       this.pos[i] += this.velocity[i];
     }
-    this.pos[0] = (this.pos[0]-this.radius)%(Xmax-this.radius*2)+this.radius;
-    this.pos[1] = (this.pos[1]-this.radius)%(Ymax-this.radius*2)+this.radius;
+    this.pos[0] = Math.abs(this.pos[0])%(Xmax+2*this.radius);
+    this.pos[1] = Math.abs(this.pos[1])%(Ymax+2*this.radius);
+    return[this.pos[0]-this.radius, this.pos[1]-this.radius];
   }
 }
 
-let myBall = new ball(100, 100, 3, 4, 25);
+let myBall;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  let r = random(15,30);
+  myBall = new ball(random(width-r)+r, random(height-r)+r, random(-5, 5), random(-5, 5), r);
   fill(0);
 }
 
 function draw() {
   background(220);
-  myBall.updatePos(width, height);
-  circle(myBall.pos[0], myBall.pos[1], myBall.radius*2);
+  let pos = myBall.updatePos(width, height);
+  circle(pos[0], pos[1], myBall.radius*2);
 }
