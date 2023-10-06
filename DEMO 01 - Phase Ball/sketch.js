@@ -11,14 +11,12 @@ class ball {
     this.velocity = [dx, dy];
     this.radius = r;
   }
-  updatePos(Xmin, Xmax, Ymin, Ymax){
+  updatePos(Xmax, Ymax){
     for(let i=0; i<2; i++){
       this.pos[i] += this.velocity[i];
     }
-    this.pos[0] = this.pos[0]<Xmin-this.radius ? Xmax-this.radius:this.pos[0];
-    this.pos[0] = this.pos[0]>Xmax+this.radius ? Xmin+this.radius:this.pos[0];
-    this.pos[1] = this.pos[1]<Ymin-this.radius ? Ymax-this.radius:this.pos[1];
-    this.pos[1] = this.pos[1]>Ymax+this.radius ? Ymin+this.radius:this.pos[1];
+    this.pos[0] = (this.pos[0]-this.radius)%(Xmax-this.radius*2)+this.radius;
+    this.pos[1] = (this.pos[1]-this.radius)%(Ymax-this.radius*2)+this.radius;
   }
 }
 
@@ -31,7 +29,6 @@ function setup() {
 
 function draw() {
   background(220);
-  myBall.updatePos(0, width, 0, height);
+  myBall.updatePos(width, height);
   circle(myBall.pos[0], myBall.pos[1], myBall.radius*2);
-  console.log(myBall);
 }
