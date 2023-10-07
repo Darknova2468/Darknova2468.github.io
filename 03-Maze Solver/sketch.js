@@ -33,8 +33,8 @@ function setup() {
   maze.cellWidth = width/maze.dimension[0];
   maze.cellHeight = height/maze.dimension[1];
   player = [5, 7];
-  graph = new createGraph(maze.mazeMap, maze.dimension);
-  graph.findPath([5, 7], [0, 1]);
+  graph = new testGraph();
+  graph.solve(0, 2);
 }
 
 function draw() {
