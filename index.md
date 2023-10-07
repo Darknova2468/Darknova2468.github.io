@@ -1,5 +1,9 @@
-#Alexander's CS30 Stuff
+# Alexander's CS30 Stuff
 
-##Projects
+## Projects
 
--[Ball Bounce](01-Ball Bounce)
+- [01 Ball Bounce](01-Ball Bounce)
+
+## Demos
+
+- [01 Phase Ball](DEMO 01-Phase Ball)
