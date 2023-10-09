@@ -11,6 +11,8 @@ let player;
 let won = false;
 let graph;
 let show = false;
+let solution;
+let currentTime;
 
 function setup() {
   createCanvas(400, 400);
@@ -33,8 +35,9 @@ function setup() {
   maze.cellWidth = width/maze.dimension[0];
   maze.cellHeight = height/maze.dimension[1];
   player = [5, 7];
-  graph = new testGraph();
-  graph.solve(0, 2);
+  graph = new generateGraph(maze.mazeMap);
+  solution = graph.solve(47, 1);
+  currentTime = millis();
 }
 
 function draw() {
@@ -44,6 +47,11 @@ function draw() {
 }
 
 function drawMaze(_maze, _pos){
+  if(millis()-currentTime > 500 && solution.length > 0){
+    currentTime = millis();
+    let id = solution.shift();
+    player = [Math.floor(id/8), id%8];  
+  }
   for(let i=0; i<_maze.dimension[0]; i++){
     for(let j=0; j<_maze.dimension[1]; j++){
       fill(colorCode[_maze.mazeMap[i][j]]);
