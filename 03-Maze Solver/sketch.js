@@ -180,7 +180,7 @@ function visualizeNodes(_maze, _nodes){
         let x = _maze.cellWidth*(i+1.75+0.5*((j+1)%2));
         let y = j*_maze.cellHeight+0.25*height;
         if(_nodes[i*_maze.dimension[1]+j] !== null){
-          text((_nodes[i*_maze.dimension[1]+j].id +" "+ _nodes[i*_maze.dimension[1]+j].edges.length), x, y);
+          text(_nodes[i*_maze.dimension[1]+j].id +" "+ _nodes[i*_maze.dimension[1]+j].edges.length), x, y;
         }
       }
     }
