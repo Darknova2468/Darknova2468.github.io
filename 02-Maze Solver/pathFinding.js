@@ -67,7 +67,7 @@ class generateGraph {
     let stack = [start];
     if(this.nodes[start] === null && this.nodes[end] === null){
       console.log("invalid start or end");
-      return [];
+      return null;
     }
     this.nodes[start].f = 0;
     while(stack.length > 0){
@@ -90,6 +90,9 @@ class generateGraph {
     }
     let result = [end];
     while(result[0] !== start){
+      if(this.nodes[result[0]].prevNode === undefined){
+        return null;
+      }
       result.unshift(this.nodes[result[0]].prevNode);
     }
     result.shift();
