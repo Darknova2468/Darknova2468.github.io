@@ -10,101 +10,77 @@ let maze;
 let player;
 let won = false;
 let graph;
-let show = false;
-let solution;
-let currentTime;
+let devMode = false;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(600, 300);
   textAlign(CENTER);
   textSize(50);
-  colorCode = [color(192), color(64), color(2, 204, 254), color(255, 36, 0)];
+  colorCode = [null, color(192), color(64), color(2, 204, 254), color(2, 204, 254), color(255, 36, 0)];
   maze = {
     mazeMap: [
-      [1, 3, 1, 1, 0, 0, 0, 0],
-      [1, 0, 1, 0, 0, 1, 1, 0],
-      [0, 0, 0, 0, 1, 1, 0, 0],
-      [0, 1, 0, 1, 0, 0, 0, 1],
-      [0, 1, 0, 0, 1, 1, 1, 1],
-      [1, 1, 1, 0, 1, 0, 0, 2],
-      [0, 0, 0, 0, 1, 0, 1, 1],
-      [1, 0, 1, 0, 0, 0, 1, 1]
+      [0, 0, 2, 3, 2, 0, 0],
+      [2, 2, 2, 1, 1, 2, 2],
+      [1, 5, 2, 1, 2, 1, 2],
+      [1, 2, 1, 1, 2, 1, 5],
+      [2, 1, 2, 1, 1, 2, 2],
+      [2, 1, 1, 1, 2, 1, 4],
+      [0, 2, 1, 2, 1, 1, 0],
+      [0, 0, 0, 1, 0, 0, 0]
     ],
-    dimension: [8, 8],
+    dimension: [8, 7],
   };
-  maze.cellWidth = width/maze.dimension[0];
-  maze.cellHeight = height/maze.dimension[1];
-  player = [5, 7];
-  graph = new generateGraph(maze.mazeMap);
-  solution = graph.solve(47, 1);
-  currentTime = millis();
+  maze.cellWidth = width*0.75/(maze.dimension[1]+1);
+  maze.cellHeight = height*0.75/(maze.dimension[0]+1);
+  player = [0, 3];
+  graph = new generateGraph(maze);
+  console.log(graph.solve(15, 3));
+}
+
+function keyTyped() {
+  if(key === " "){
+    devMode = !devMode;
+  }
 }
 
 function draw() {
   background(220);
   drawMaze(maze, player);
-  checkWin(player);
+  if(devMode){
+    visualizeNodes(maze, graph.nodes);
+  }
 }
 
 function drawMaze(_maze, _pos){
-  if(millis()-currentTime > 500 && solution.length > 0){
-    currentTime = millis();
-    let id = solution.shift();
-    player = [Math.floor(id/8), id%8];  
-  }
   for(let i=0; i<_maze.dimension[0]; i++){
     for(let j=0; j<_maze.dimension[1]; j++){
-      fill(colorCode[_maze.mazeMap[i][j]]);
-      rect(i*_maze.cellWidth, j*_maze.cellHeight, _maze.cellWidth, _maze.cellHeight);
+      if(_maze.mazeMap[i][j] !== 0){
+        fill(colorCode[_maze.mazeMap[i][j]]);
+        let x = _maze.cellWidth*(i+1.75+0.5*((j+1)%2));
+        let y = j*_maze.cellHeight+0.25*height;
+        ellipse(x, y, _maze.cellWidth, _maze.cellHeight);
+      }
     }
   }
-  fill(255, 255, 0);
-  circle(_maze.cellWidth*(_pos[0]+0.5), _maze.cellHeight*(_pos[1]+0.5), _maze.cellWidth*0.5);
-  if(show){
-    showGraph(graph, maze.cellWidth, maze.cellHeight);
-  }
+  fill(0, 255, 0);
+  let x = _maze.cellWidth*(_pos[0]+1.75+0.5*((_pos[1]+1)%2));
+  let y = _pos[1]*_maze.cellHeight+0.25*height;
+  ellipse(x, y, _maze.cellWidth*0.5, _maze.cellHeight*0.5);
 }
 
-function keyPressed(){
-  if(!won){
-    if(key === "s" && maze.mazeMap[player[0]][player[1]+1] !== 1 && player[1]<maze.dimension[0]) {
-      player[1]++;
-    } 
-    if(key === "w" && maze.mazeMap[player[0]][player[1]-1] !== 1 && player[1]>0) {
-      player[1]--;
-    }
-    if(key === "d" && maze.mazeMap[player[0]+1][player[1]] !== 1 && player[0]<maze.dimension[1]-1) {
-      player[0]++;
-    }
-    if(key === "a" && maze.mazeMap[player[0]-1][player[1]] !== 1 && player[0]>0) {
-      player[0]--;
-    }
-    if(key === " "){
-      show = !show;
-    }
-  }
-}
-
-function checkWin(_pos){
-  if(maze.mazeMap[_pos[0]][_pos[1]] === 3){
-    fill(255);
-    textSize(50);
-    text("YOU WON", 200, 200);
-    won = true;
-  }
-}
-
-function showGraph(_graph, _cellWidth, _cellHeight){
-  let nodes = graph.nodes;
-  for(let i=0; i<nodes.length; i++){
-    if(nodes[i]!== null){
-      let x = _cellWidth*(Math.floor(nodes[i].id/8)+0.5);
-      let y = _cellHeight*(nodes[i].id%8+0.5);
-      fill(64);
-      circle(x, y, _cellWidth/2);
-      fill(255);
-      textSize(10);
-      text("ID:" + nodes[i].id, x, y);
+function visualizeNodes(_maze, _nodes){
+  fill(255);
+  textAlign(CENTER);
+  textSize(20);
+  for(let i=0; i<_maze.dimension[0]; i++){
+    for(let j=0; j<_maze.dimension[1]; j++){
+      if(_maze.mazeMap[i][j] !== 0){
+        let x = _maze.cellWidth*(i+1.75+0.5*((j+1)%2));
+        let y = j*_maze.cellHeight+0.25*height;
+        if(_nodes[i*_maze.dimension[1]+j] !== null){
+          text((_nodes[i*_maze.dimension[1]+j].id +" "+ _nodes[i*_maze.dimension[1]+j].edges.length), x, y);
+        }
+      }
     }
   }
 }
