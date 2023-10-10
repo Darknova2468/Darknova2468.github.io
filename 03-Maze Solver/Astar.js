@@ -42,7 +42,7 @@ class generateGraph {
               y = j + case2[k][1];
             }
             let id = x*_maze.dimension[1]+y;
-            if(x<= _maze.dimension[1] && x>=0 && y<=_maze.dimension[0] && y>= 0){
+            if(x< _maze.dimension[0] && x>=0 && y<_maze.dimension[1] && y>= 0){
               if(maze[x][y] !== 0 && maze[x][y] !== 2){
                 cNode.edges.push([id, 1]);
               }
@@ -58,8 +58,12 @@ class generateGraph {
     console.log(this.nodes);
   }
   solve(start, end){
-    let time = millis();
     let check = new Array(this.nodes.length).fill(false);
+    start = start[0]*7+start[1];
+    end = end[0]*7+end[1];
+    if(start === end){
+      return null;
+    }
     let stack = [start];
     if(this.nodes[start] === null && this.nodes[end] === null){
       console.log("invalid start or end");
@@ -88,7 +92,14 @@ class generateGraph {
     while(result[0] !== start){
       result.unshift(this.nodes[result[0]].prevNode);
     }
-    console.log(millis()-time);
+    result.shift();
+    for(let i=0; i<check.length; i++){
+      if(check[i] === true){
+        this.nodes[i].f = Infinity;
+        this.nodes[i].prevNode = 0;
+      }
+    }
+
     return result;
   }
 }
