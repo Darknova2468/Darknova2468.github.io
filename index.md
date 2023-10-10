@@ -3,7 +3,7 @@
 ## Projects
 
 - [01 Ball Bounce](01-Ball Bounce)
-- [02 Escape the Maze-trix (Demo Version)](03-Maze Solver)
+- [02 Escape the Maze-trix (Demo Version)](02-Maze Solver)
 
 ## Demos
 
