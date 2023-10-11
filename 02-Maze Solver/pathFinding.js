@@ -7,9 +7,8 @@ class node {
   }
 }
 
-class generateGraph {
-  constructor(_maze) {
-    let maze = _maze.mazeMap;
+class Graph {
+  constructor(_mazeMap, _dimension) {
     let case1 = [
       [-1, 1],
       [0, 1],
@@ -27,10 +26,10 @@ class generateGraph {
       [-1, 0]
     ];
     this.nodes = [];
-    for(let i=0; i<_maze.dimension[0]; i++){
-      for(let j=0; j<_maze.dimension[1]; j++){
-        if(maze[i][j] !== 0 && maze[i][j] !== 2){
-          let cNode = new node(i*_maze.dimension[1]+j, []);
+    for(let i=0; i<_dimension[0]; i++){
+      for(let j=0; j<_dimension[1]; j++){
+        if(_mazeMap[i][j] !== 0 && _mazeMap[i][j] !== 2){
+          let cNode = new node(i*_dimension[1]+j, []);
           for(let k=0; k<6; k++){
             let x; let y;
             if(j%2 === 1){
@@ -41,9 +40,9 @@ class generateGraph {
               x = i + case2[k][0];
               y = j + case2[k][1];
             }
-            let id = x*_maze.dimension[1]+y;
-            if(x< _maze.dimension[0] && x>=0 && y<_maze.dimension[1] && y>= 0){
-              if(maze[x][y] !== 0 && maze[x][y] !== 2){
+            let id = x*_dimension[1]+y;
+            if(x< _dimension[0] && x>=0 && y<_dimension[1] && y>= 0){
+              if(_mazeMap[x][y] !== 0 && _mazeMap[x][y] !== 2){
                 cNode.edges.push([id, 1]);
               }
             }
@@ -55,7 +54,6 @@ class generateGraph {
         }
       }
     }
-    console.log(this.nodes);
   }
   solve(start, end){
     let check = new Array(this.nodes.length).fill(false);
