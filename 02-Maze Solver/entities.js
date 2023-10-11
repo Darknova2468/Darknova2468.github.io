@@ -1,5 +1,6 @@
 class Player{
   constructor(_pos){
+    this.start = _pos;
     this.pos = _pos;
     this.nextPos = null;
   }
@@ -72,6 +73,7 @@ class Player{
 
 class Enemy{
   constructor(_pos){
+    this.start = _pos;
     this.pos = _pos;
     this.path;
   }

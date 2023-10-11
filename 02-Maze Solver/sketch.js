@@ -77,6 +77,13 @@ function mouseReleased(){
       levels.currentMaze + 1 < levels.mazeNumbers){
       levels.currentMaze++;
     }
+    for(let i=0; i<currentMaze.enemies.length; i++){
+      if(currentMaze.player.pos[0] === currentMaze.enemies[i].pos[0] &&
+        currentMaze.player.pos[1] === currentMaze.enemies[i].pos[1]){
+        resetMaze();
+        break;
+      }
+    }
   }
 }
 
@@ -84,4 +91,13 @@ function worldToScreen(_pos, _scale, _offset){
   let x = _scale[0]*(_pos[0]+_offset[0]+0.5*((_pos[1]+1)%2));
   let y = _scale[1]*(_pos[1]+_offset[1]);
   return [x,y];
+}
+
+function resetMaze(){
+  let currentMaze = levels.mazes[levels.currentMaze];
+  //resets player and enemy pos;
+  currentMaze.player.pos = currentMaze.player.start;
+  for(let i=0; i<currentMaze.enemies.length; i++){
+    currentMaze.enemies[i].pos = currentMaze.enemies[i].start;
+  }
 }
