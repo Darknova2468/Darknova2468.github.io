@@ -79,7 +79,9 @@ class Enemy{
   }
   updatePos(_graph, _player, _dimension){
     this.path = _graph.solve(this.pos, _player);
-    let id = this.path.shift();
-    this.pos = [Math.floor(id/_dimension[1]),id%_dimension[1]];
+    if(this.path !== null){
+      let id = this.path.shift();
+      this.pos = [Math.floor(id/_dimension[1]),id%_dimension[1]];
+    }
   }
 }
