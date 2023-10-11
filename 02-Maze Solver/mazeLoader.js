@@ -7,7 +7,7 @@ class Maze {
     this.end = _end;
     this.enemies = _enemies;
     this.graph = new Graph(this.mazeMap, this.dimension);
-    if(width/2 > height){
+    if(width/2 < height){
       this.cellSize = [width/10, width/20];
     }
     else {
@@ -18,7 +18,8 @@ class Maze {
 
 function loadLevels(_data){
   let levels = [];
-  for(let i=0; i<_data.shift(); i++){
+  let levelNumber = _data.shift()
+  for(let i=0; i<levelNumber; i++){
     let dimension = _data.shift().split(",", 2).map(Number);
     dimension = [parseInt(dimension[0]), parseInt(dimension[1])];
     let mazeMap = new Array(dimension[0]);
@@ -34,8 +35,8 @@ function loadLevels(_data){
     let start = new Player(_data.shift().split(",", 2).map(Number));
     let end = _data.shift().split(",", 2).map(Number);
     let enemies = [];
-    let n =_data.shift();
-    for(let i=0; i<n; i++){
+    let enemyNumber =_data.shift();
+    for(let i=0; i<enemyNumber; i++){
       enemies.push(new Enemy(_data.shift().split(",", 2).map(Number)));
     }
     levels.push(new Maze(i, mazeMap, dimension, start, end, enemies));
