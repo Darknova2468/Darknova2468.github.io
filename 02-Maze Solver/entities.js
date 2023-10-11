@@ -75,7 +75,7 @@ class Enemy{
   constructor(_pos){
     this.start = _pos;
     this.pos = _pos;
-    this.path;
+    this.path = null;
   }
   updatePos(_graph, _player, _dimension){
     this.path = _graph.solve(this.pos, _player);
