@@ -5,106 +5,59 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+let levels;
+let data;
 let colorCode; 
-let maze;
-let player;
-let enemy1;
-let enemy2;
-let path1;
-let path2;
-let won = false;
-let graph;
-let devMode = false;
-let nextPos;
+
+function preload(){
+  data = loadStrings("levels.txt");
+}
 
 function setup() {
   createCanvas(600, 300);
-  textAlign(CENTER);
-  textSize(50);
-  colorCode = [null, color(192), color(64), color(2, 204, 254), color(2, 204, 254), color(255, 36, 0)];
-  maze = {
-    mazeMap: [
-      [0, 0, 2, 3, 2, 0, 0],
-      [2, 2, 2, 1, 1, 2, 2],
-      [1, 5, 2, 1, 2, 1, 2],
-      [1, 2, 1, 1, 2, 1, 5],
-      [2, 1, 2, 1, 1, 2, 2],
-      [2, 1, 1, 1, 2, 2, 4],
-      [0, 2, 1, 2, 1, 1, 0],
-      [0, 0, 0, 1, 0, 0, 0]
-    ],
-    dimension: [8, 7],
+  levels = {
+    mazes: loadLevels(data),
+    currentMaze: 0,
   };
-  maze.cellWidth = width*0.75/(maze.dimension[1]+1);
-  maze.cellHeight = height*0.75/(maze.dimension[0]+1);
-  player = [0, 3];
-  enemy1 = [2, 1];
-  enemy2 = [3, 6];
-  graph = new generateGraph(maze);
-  path1 = graph.solve(enemy1, player);
-  path2 = graph.solve(enemy2, player);
-}
-
-function keyTyped() {
-  if(key === " "){
-    devMode = !devMode;
-  }
+  colorCode = [null, color(192), color(64), color(2, 204, 254), color(2, 204, 254), color(255, 36, 0)];
 }
 
 function draw() {
   background(220);
-  drawMaze(maze, player, [enemy1, enemy2]);
-  nextPos = castNext(player);
-  if(devMode){
-    visualizeNodes(maze, graph.nodes);
-  }
+  drawMaze(levels.mazes[levels.currentMaze]);
 }
 
-function mouseReleased(){
-  if(nextPos !== null){
-    player = nextPos;
-    path1 = graph.solve(enemy1, player);
-    path2 = graph.solve(enemy2, player);
-    if(path1 !== null){
-      enemy1 = [Math.floor(path1[0]/7),path1[0]%7];
-    }
-    if(path2 !== null){
-      enemy2 = [Math.floor(path2[0]/7),path2[0]%7];
-    }
-    if(enemy1[0] === player[0] && enemy1[1] === player[1] ||
-      enemy2[0] === player[0] && enemy2[1] === player[1]){
-      loseScreen();
-    }
-    else if(player[0] === 5 && player[1] === 6){
-      winScreen();
-    }
-  }
-}
-
-function drawMaze(_maze, _pos, _enemys){
+function drawMaze(_maze){
+  //draws map;
   for(let i=0; i<_maze.dimension[0]; i++){
     for(let j=0; j<_maze.dimension[1]; j++){
       if(_maze.mazeMap[i][j] !== 0){
         fill(colorCode[_maze.mazeMap[i][j]]);
-        let x = _maze.cellWidth*(i+1.75+0.5*((j+1)%2));
-        let y = j*_maze.cellHeight+0.25*height;
-        ellipse(x, y, _maze.cellWidth, _maze.cellHeight);
+        let x = _maze.cellSize[0]*(i+1.5+0.5*((j+1)%2));
+        let y = _maze.cellSize[1]*(j+2);
+        ellipse(x, y, _maze.cellSize[0], _maze.cellSize[1]);
       }
     }
   }
+  //draws player;
   fill(0, 255, 0);
-  let x = _maze.cellWidth*(_pos[0]+1.75+0.5*((_pos[1]+1)%2));
-  let y = _pos[1]*_maze.cellHeight+0.25*height;
-  ellipse(x, y, _maze.cellWidth*0.5, _maze.cellHeight*0.5);
+  let playerPos = _maze.player.pos;
+  let x = _maze.cellSize[0]*(playerPos[0]+1.5+0.5*((playerPos[1]+1)%2));
+  let y = _maze.cellSize[1]*(playerPos[1]+2);
+  ellipse(x, y, _maze.cellSize[1], _maze.cellSize[1]*0.5);
 
+  //draws enemies;
   fill(255, 165, 0);
-  for(let i=0; i<_enemys.length; i++){
-    let x =_maze.cellWidth*(_enemys[i][0]+1.75+0.5*((_enemys[i][1]+1)%2));
-    let y = _enemys[i][1]*_maze.cellHeight+0.25*height;
-    ellipse(x, y, _maze.cellWidth*0.5, _maze.cellHeight*0.5);
+  for(let i=0; i<_maze.enemies.length; i++){
+    let enemyPos = _maze.enemies[i].pos;
+    let x = _maze.cellSize[0]*(enemyPos[0]+1.5+0.5*((enemyPos[1]+1)%2));
+    let y = _maze.cellSize[1]*(enemyPos[1]+2);
+    ellipse(x, y, _maze.cellSize[1], _maze.cellSize[1]*0.5);
   }
 }
 
+//incorperate this function into the player class under entitites.js
+/* 
 function castNext(_pos){
   let pointer;
   let cases = [
@@ -169,34 +122,4 @@ function castNext(_pos){
   }
   return null;
 }
-
-function visualizeNodes(_maze, _nodes){
-  fill(255);
-  textAlign(CENTER);
-  textSize(20);
-  for(let i=0; i<_maze.dimension[0]; i++){
-    for(let j=0; j<_maze.dimension[1]; j++){
-      if(_maze.mazeMap[i][j] !== 0){
-        let x = _maze.cellWidth*(i+1.75+0.5*((j+1)%2));
-        let y = j*_maze.cellHeight+0.25*height;
-        if(_nodes[i*_maze.dimension[1]+j] !== null){
-          text((_nodes[i*_maze.dimension[1]+j].id +" "+ _nodes[i*_maze.dimension[1]+j].edges.length), x, y);
-        }
-      }
-    }
-  }
-}
-
-function winScreen(){
-  textSize(50);
-  fill(0, 255, 0);
-  text("YOU WIN", width/2, height/2);
-  console.log("win");
-}
-
-function loseScreen(){
-  textSize(50);
-  fill(255,0,0);
-  text("YOU LOSE", width/2, height/2);
-  console.log("lose");
-}
+*/
