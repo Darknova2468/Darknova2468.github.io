@@ -4,16 +4,29 @@ class Maze {
     this.mazeMap = _mazeMap;
     this.dimension = _dimension;
     this.player = _player;
+    this.playerPortals = findPortals(_mazeMap);
     this.end = _end;
     this.enemies = _enemies;
     this.graph = new Graph(this.mazeMap, this.dimension);
-    if(width/2 < height){
-      this.cellSize = [width/10, width/20];
+    if(width/2 > height){
+      this.cellSize = [width/12, width/24];
     }
     else {
-      this.cellSize = [height/5, height/10];
+      this.cellSize = [height/6, height/12];
     }
   }
+}
+
+function findPortals(_mazeMap){
+  let portals = [];
+  for(let i=0; i<_mazeMap.length; i++){
+    for(let j=0; j<_mazeMap.length; j++){
+      if(_mazeMap[i][j] === 6 || _mazeMap[i][j] === 7){
+        portals.push([i,j]);
+      }
+    }
+  }
+  return portals;
 }
 
 function loadLevels(_data){
