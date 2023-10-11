@@ -5,11 +5,11 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-class ball {
-  constructor(x, y, dx, dy, r){
+class Ball {
+  constructor(x, y){
     this.pos = [x, y];
-    this.velocity = [dx, dy];
-    this.radius = r;
+    this.velocity = [random(-5, 5), random(-5, 5)];
+    this.radius = random(15,30);
   }
   updatePos(Xmax, Ymax){
     for(let i=0; i<2; i++){
@@ -23,17 +23,21 @@ class ball {
   }
 }
 
-let myBall;
+let myBalls = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  let r = random(15,30);
-  myBall = new ball(random(width-r)+r, random(height-r)+r, random(-5, 5), random(-5, 5), r);
-  fill(0);
+}
+
+function mouseReleased(){
+  myBalls.push(new Ball(mouseX, mouseY));
 }
 
 function draw() {
   background(220);
-  let pos = myBall.updatePos(width, height);
-  circle(pos[0], pos[1], myBall.radius*2);
+  fill(0);
+  for(let i=0; i<myBalls.length; i++){
+    let pos = myBalls[i].updatePos(width, height);
+    circle(pos[0], pos[1], myBalls[i].radius*2);
+  }
 }
