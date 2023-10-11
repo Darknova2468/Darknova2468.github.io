@@ -15,9 +15,11 @@ class ball {
     for(let i=0; i<2; i++){
       this.pos[i] += this.velocity[i];
     }
-    this.pos[0] = Math.abs(this.pos[0])%(Xmax+2*this.radius);
-    this.pos[1] = Math.abs(this.pos[1])%(Ymax+2*this.radius);
-    return[this.pos[0]-this.radius, this.pos[1]-this.radius];
+    this.pos[0] = this.pos[0]+this.radius < 0 ? width-this.radius:this.pos[0];
+    this.pos[0] = this.pos[0]-this.radius > width ? this.radius:this.pos[0];
+    this.pos[1] = this.pos[1]+this.radius < 0 ? height-this.radius:this.pos[1];
+    this.pos[1] = this.pos[1]-this.radius > height ? this.radius:this.pos[1];
+    return[this.pos[0], this.pos[1]];
   }
 }
 
