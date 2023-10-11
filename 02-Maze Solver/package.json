@@ -398,7 +398,6 @@
       "getItem": true,
       "clearStorage": true,
       "removeItem": true,
-  
       "getAudioContext": true,
       "isSupported": true,
       "isFileSupported": true,
@@ -436,7 +435,6 @@
       "AUDIO": true,
       "createCapture": true,
       "createElement": true,
-  
       "collidePointPoint": true,
       "collidePointCircle": true,
       "collidePointEllipse": true,
@@ -455,7 +453,6 @@
       "collideLinePoly": true,
       "collidePolyPoly": true,
       "collidePointTriangle": true,
-
       "deltaTime": true
     }
   }
