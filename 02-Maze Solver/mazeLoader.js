@@ -31,7 +31,7 @@ function findPortals(_mazeMap){
 
 function loadLevels(_data){
   let levels = [];
-  let levelNumber = _data.shift()
+  let levelNumber = _data.shift();
   for(let i=0; i<levelNumber; i++){
     let dimension = _data.shift().split(",", 2).map(Number);
     dimension = [parseInt(dimension[0]), parseInt(dimension[1])];
