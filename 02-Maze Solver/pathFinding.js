@@ -3,12 +3,13 @@ class node {
     this.id = _id;
     this.edges = _edges;
     this.f = Infinity;
-    this.prevNode;
+    this.prevNode = 0;
   }
 }
 
 class Graph {
   constructor(_mazeMap, _dimension) {
+    this.dimension = _dimension;
     let case1 = [
       [-1, 1],
       [0, 1],
@@ -25,11 +26,15 @@ class Graph {
       [1, -1],
       [-1, 0]
     ];
+    let portals = [];
     this.nodes = [];
     for(let i=0; i<_dimension[0]; i++){
       for(let j=0; j<_dimension[1]; j++){
         if(_mazeMap[i][j] !== 0 && _mazeMap[i][j] !== 2){
           let cNode = new node(i*_dimension[1]+j, []);
+          if(_mazeMap[i][j] === 6 || _mazeMap[i][j] === 8){
+            portals.push(cNode.id);
+          }
           for(let k=0; k<6; k++){
             let x; let y;
             if(j%2 === 1){
@@ -54,11 +59,19 @@ class Graph {
         }
       }
     }
+    for(let i=0; i<portals.length; i++){
+      let id = portals[i];
+      for(let j=0; j<portals.length; j++){
+        if(portals[j] !== id){
+          this.nodes[portals[i]].edges.push([portals[j], 1]);
+        }
+      }
+    }
   }
   solve(start, end){
     let check = new Array(this.nodes.length).fill(false);
-    start = start[0]*7+start[1];
-    end = end[0]*7+end[1];
+    start = start[0]*this.dimension[1]+start[1];
+    end = end[0]*this.dimension[1]+end[1];
     if(start === end){
       return null;
     }
@@ -87,6 +100,9 @@ class Graph {
       stack = [...nextStack];
     }
     let result = [end];
+    if(this.nodes[end].prevNode === 0){
+      return null;
+    }
     while(result[0] !== start){
       if(this.nodes[result[0]].prevNode === undefined){
         return null;
