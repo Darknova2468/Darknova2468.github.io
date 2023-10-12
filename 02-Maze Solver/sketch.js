@@ -14,7 +14,7 @@ function preload(){
     levels = {
       mazes: loadLevels(data),
       currentMaze: 0,
-      mazeNumbers: 4
+      mazeNumbers: 5
     };
   });
 }
