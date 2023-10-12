@@ -20,6 +20,9 @@ function preload(){
 }
 function setup() {
   console.log(levels);
+  for(let i=0; i<levels.mazeNumbers; i++){
+    levels.mazes[i].offset = [1.5,2];
+  }
   resizeCanvas(600,300);  
   colorCode = [
     null, 
@@ -47,19 +50,19 @@ function drawMaze(_maze){
     for(let j=0; j<_maze.dimension[1]; j++){
       if(_maze.mazeMap[i][j] !== 0){
         fill(colorCode[_maze.mazeMap[i][j]]);
-        let [x, y] = worldToScreen([i,j], _maze.cellSize, [1.5, 2]);
+        let [x, y] = worldToScreen([i,j], _maze.cellSize, _maze.offset);
         ellipse(x, y, _maze.cellSize[0], _maze.cellSize[1]);
       }
     }
   }
   //draws player;
   fill(0, 255, 0);
-  let [x, y] = worldToScreen(_maze.player.pos, _maze.cellSize, [1.5, 2]);
+  let [x, y] = worldToScreen(_maze.player.pos, _maze.cellSize, _maze.offset);
   ellipse(x, y, _maze.cellSize[1], _maze.cellSize[1]*0.5);
 
   //draw players next move;
   if(_maze.player.nextPos !== null){
-    let [x, y] = worldToScreen(_maze.player.nextPos, _maze.cellSize, [1.5, 2]);
+    let [x, y] = worldToScreen(_maze.player.nextPos, _maze.cellSize, _maze.offset);
     fill(0, 255, 0);
     ellipse(x, y, _maze.cellSize[1], _maze.cellSize[1]/2);
     fill(colorCode[_maze.mazeMap[_maze.player.nextPos[0]][_maze.player.nextPos[1]]]);
@@ -69,7 +72,7 @@ function drawMaze(_maze){
   //draws enemies;
   fill(255, 165, 0);
   for(let i=0; i<_maze.enemies.length; i++){
-    let [x, y] = worldToScreen(_maze.enemies[i].pos, _maze.cellSize, [1.5, 2]);
+    let [x, y] = worldToScreen(_maze.enemies[i].pos, _maze.cellSize, _maze.offset);
     ellipse(x, y, _maze.cellSize[1], _maze.cellSize[1]*0.5);
   }
 }
