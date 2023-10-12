@@ -14,7 +14,7 @@ function preload(){
     levels = {
       mazes: loadLevels(data),
       currentMaze: 0,
-      mazeNumbers: 3
+      mazeNumbers: 4
     };
   });
 }
@@ -107,6 +107,11 @@ function mouseReleased(){
 function keyTyped(){
   if(key === "r"){
     resetMaze();
+  }
+  if(keyCode === 13){
+    if(levels.currentMaze + 1 < levels.mazeNumbers){
+      levels.currentMaze++;
+    }
   }
 }
 
