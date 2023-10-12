@@ -8,16 +8,30 @@
 let levels;
 let colorCode; 
 
-function setup() {
+function preload(){
   createCanvas(600, 300);
   loadStrings("levels.txt", function(data){
     levels = {
       mazes: loadLevels(data),
       currentMaze: 0,
-      mazeNumbers: 2
+      mazeNumbers: 3
     };
   });
-  colorCode = [null, color(192), color(64), color(2, 204, 254), color(2, 204, 254), color(255, 36, 0)];
+}
+function setup() {
+  console.log(levels);
+  resizeCanvas(600,300);  
+  colorCode = [
+    null, 
+    color(192), 
+    color(64), 
+    color(2, 204, 254), 
+    color(2, 204, 254), 
+    color(255, 36, 0), 
+    color(128,0,128), 
+    color(64, 0, 192), 
+    color(192,0,64)
+  ];
 }
 
 function draw() {
@@ -84,6 +98,12 @@ function mouseReleased(){
         break;
       }
     }
+  }
+}
+
+function keyTyped(){
+  if(key === "r"){
+    resetMaze();
   }
 }
 
