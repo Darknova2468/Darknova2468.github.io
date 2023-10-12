@@ -8,14 +8,33 @@ class Maze {
     this.end = _end;
     this.enemies = _enemies;
     this.graph = new Graph(this.mazeMap, this.dimension);
-    if(width/2 > height){
-      this.cellSize = [width/12, width/24];
+    this.cellSize;
+    this.offset;
+    this.autoScale(_dimension);
+  }
+  autoScale(_dimension){
+    let xRatio = (_dimension[1]+2)/(_dimension[0]+2.5);
+    let yRatio = (_dimension[0]+2.5)/(_dimension[1]+2);
+    if(width*xRatio < height*yRatio){
+      let yScale = height/(_dimension[1]+2);
+      let yOffset = 1;
+      let xScale = yScale*2;
+      let xOffset = (width-xScale*_dimension[0])/(1.25*xScale);
+      this.cellSize = [xScale, yScale];
+      this.offset = [xOffset, yOffset];
     }
-    else {
-      this.cellSize = [height/6, height/12];
+    else{
+      let xScale = width/(_dimension[0]+2.5);
+      let xOffset = 1.5;
+      let yScale = xScale/2;
+      let yOffset = (height-yScale*_dimension[1])/(1.5*yScale);
+      this.cellSize = [xScale, yScale];
+      this.offset = [xOffset, yOffset];
     }
   }
 }
+
+
 
 function findPortals(_mazeMap){
   let portals = [];

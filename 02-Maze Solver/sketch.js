@@ -20,10 +20,7 @@ function preload(){
 }
 function setup() {
   console.log(levels);
-  for(let i=0; i<levels.mazeNumbers; i++){
-    levels.mazes[i].offset = [1.5,2];
-  }
-  resizeCanvas(600,300);  
+  resizeCanvas(600, 300); 
   colorCode = [
     null, 
     color(192), 
