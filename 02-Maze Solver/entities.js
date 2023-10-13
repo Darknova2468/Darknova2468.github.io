@@ -3,6 +3,7 @@ class Player{
     this.start = _pos;
     this.pos = _pos;
     this.nextPos = null;
+    this.powerUp = false;
   }
   updatePos(){
     this.pos = this.nextPos;
@@ -10,19 +11,29 @@ class Player{
   castNext(_maze){
     //equations found with chatgpt
     if(_maze.mazeMap[_maze.player.pos[0]][_maze.player.pos[1]] === 6 ||
-       _maze.mazeMap[_maze.player.pos[0]][_maze.player.pos[1]] === 7){
+       _maze.mazeMap[_maze.player.pos[0]][_maze.player.pos[1]] === 7 ||
+       this.powerUp){
       let y = mouseY/_maze.cellSize[1]-_maze.offset[1];
       let x = (mouseX-_maze.cellSize[0]*_maze.offset[0]-0.5*_maze.cellSize[0]*((y+1)%2)) / _maze.cellSize[0];
-      x = Math.round(x);
-      y = Math.round(y);
+      x = Math.floor(x);
+      y = Math.floor(y);
       if(x>=0 && x<_maze.dimension[0] && y>=0 && y<_maze.dimension[1]){
+        if(this.powerUp === true){
+          for(let i=0;i<_maze.enemies.length; i++){
+            if(_maze.enemies[i].pos[0] === x && 
+                 _maze.enemies[i].pos[1] === y){
+              this.nextPos = [x, y, true, i];
+              return [x, y, true, i];
+            }
+          }
+        }
         for(let i=0;i<_maze.playerPortals.length; i++){
           if(_maze.playerPortals[i][0] === x && 
                _maze.playerPortals[i][1] === y &&
                _maze.player.pos[0] !== x &&
                _maze.player.pos[1] !== y){
-            this.nextPos = [x, y];
-            return [x, y];
+            this.nextPos = [x, y, false];
+            return [x, y, false];
           }
         }
       }
@@ -76,8 +87,8 @@ class Player{
       }
       if(x< _maze.dimension[0] && x>=0 && y<_maze.dimension[1] && y>= 0){
         if(_maze.mazeMap[x][y] !== 0 && _maze.mazeMap[x][y] !== 2){
-          this.nextPos = [x, y];
-          return [x, y];
+          this.nextPos = [x, y, false];
+          return [x, y, false];
         }
         this.nextPos = null;
         return null;
@@ -95,12 +106,25 @@ class Enemy{
     this.start = _pos;
     this.pos = _pos;
     this.path = null;
+    this.isDead = false;
   }
   updatePos(_graph, _player, _dimension){
-    this.path = _graph.solve(this.pos, _player);
-    if(this.path !== null){
-      let id = this.path.shift();
-      this.pos = [Math.floor(id/_dimension[1]),id%_dimension[1]];
+    if(this.isDead === true){
+      this.isDead = false;
     }
+    else {
+      this.path = _graph.solve(this.pos, _player);
+      if(this.path !== null){
+        let id = this.path.shift();
+        this.pos = [Math.floor(id/_dimension[1]),id%_dimension[1]];
+      }
+    }
+  }
+}
+
+class PowerUp{
+  constructor(_pos){
+    this.pos = _pos;
+    this.grabbed = false;
   }
 }

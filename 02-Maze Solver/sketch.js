@@ -18,13 +18,14 @@ function preload(){
     levels = {
       mazes: loadLevels(data, ),
       currentMaze: 0,
-      mazeNumbers: 5
+      mazeNumbers: 6
     };
   });
   
 }
 function setup() {
   resizeCanvas(600, 300); 
+  console.log(levels);
   //https://coolors.co/palette/f0ead2-dde58f-adc178-a98467-6c584c
 }
 
@@ -50,20 +51,39 @@ function drawMaze(_maze, _textures){
   let [x, y] = worldToScreen(_maze.player.pos, _maze.cellSize, _maze.offset);
   ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1], _maze.cellSize[1]*0.5);
 
-  //draw players next move;
-  if(_maze.player.nextPos !== null && playerState){
-    let [x, y] = worldToScreen(_maze.player.nextPos, _maze.cellSize, _maze.offset);
-    fill(0, 255, 0);
-    ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1], _maze.cellSize[1]/2);
-    fill(192);
-    ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1]/2, _maze.cellSize[1]/4);
-  }
-
   //draws enemies;
   fill(255, 165, 0);
   for(let i=0; i<_maze.enemies.length; i++){
     let [x, y] = worldToScreen(_maze.enemies[i].pos, _maze.cellSize, _maze.offset);
     ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1], _maze.cellSize[1]*0.5);
+  }
+    
+  //draw players next move;
+  if(_maze.player.nextPos !== null && playerState){
+    let [x, y] = worldToScreen(_maze.player.nextPos, _maze.cellSize, _maze.offset);
+    if(_maze.player.nextPos[2] === true){
+      fill(255, 0, 0);
+    }
+    else {
+      fill(0, 255, 0);
+    }
+    ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1], _maze.cellSize[1]/2);
+    if(_maze.player.nextPos[2] === true){
+      fill(255, 165, 0);
+    }
+    else {
+      fill(192);
+    }
+    ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1]/2, _maze.cellSize[1]/4);
+  }
+
+  //draws PowerUps
+  fill(128, 0, 128);
+  for(let i=0; i<_maze.powerUps.length; i++){
+    if(_maze.powerUps[i].grabbed === false){
+      let [x, y] = worldToScreen(_maze.powerUps[i].pos, _maze.cellSize, _maze.offset);
+      ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1]*0.75, _maze.cellSize[1]*0.33);
+    }
   }
 }
 
@@ -71,7 +91,15 @@ function mouseReleased(){
   //moves player and enemies;
   if(levels.mazes[levels.currentMaze].player.nextPos !== null && playerState){
     let currentMaze = levels.mazes[levels.currentMaze];
-    currentMaze.player.updatePos();
+    if(currentMaze.player.nextPos[2] !== true){
+      currentMaze.player.updatePos();
+    }
+    //if an enemy is killed reset their spawn point
+    else{
+      currentMaze.enemies[currentMaze.player.nextPos[3]].pos = currentMaze.enemies[currentMaze.player.nextPos[3]].start;
+      currentMaze.enemies[currentMaze.player.nextPos[3]].isDead = true;
+      currentMaze.player.powerUp = false;
+    }
     playerState = false;
     sleep(200).then(() =>{
       for(let i=0; i<levels.mazes[levels.currentMaze].enemies.length; i++){
@@ -86,6 +114,16 @@ function mouseReleased(){
         if(currentMaze.player.pos[0] === currentMaze.enemies[i].pos[0] &&
           currentMaze.player.pos[1] === currentMaze.enemies[i].pos[1]){
           resetMaze();
+          break;
+        }
+      }  
+      //checks if you have grabbed a powerUp
+      for(let i=0; i<currentMaze.powerUps.length; i++){
+        if(currentMaze.player.pos[0] === currentMaze.powerUps[i].pos[0] &&
+          currentMaze.player.pos[1] === currentMaze.powerUps[i].pos[1] &&
+          currentMaze.powerUps[i].grabbed === false){
+          currentMaze.player.powerUp = true;
+          currentMaze.powerUps[i].grabbed = true;
           break;
         }
       }  
@@ -119,10 +157,13 @@ function worldToScreen(_pos, _scale, _offset){
 
 function resetMaze(){
   let currentMaze = levels.mazes[levels.currentMaze];
-  //resets player and enemy pos;
+  //resets player power ups and enemy pos;
   currentMaze.player.pos = currentMaze.player.start;
   for(let i=0; i<currentMaze.enemies.length; i++){
     currentMaze.enemies[i].pos = currentMaze.enemies[i].start;
+  }
+  for(let i=0; i<currentMaze.powerUps.length; i++){
+    currentMaze.powerUps[i].grabbed = false;
   }
 }
 

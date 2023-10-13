@@ -1,5 +1,5 @@
 class Maze {
-  constructor(_id, _mazeMap, _dimension, _player, _end, _enemies){
+  constructor(_id, _mazeMap, _dimension, _player, _end, _enemies, _powerUps){
     this.id = _id;
     this.mazeMap = _mazeMap;
     this.dimension = _dimension;
@@ -10,12 +10,13 @@ class Maze {
     this.graph = new Graph(this.mazeMap, this.dimension);
     this.cellSize;
     this.offset;
+    this.powerUps = _powerUps;
     this.autoScale(_dimension);
   }
   autoScale(_dimension){
     let xRatio = (_dimension[1]+2)/(_dimension[0]+2.5);
     let yRatio = (_dimension[0]+2.5)/(_dimension[1]+2);
-    if(width*xRatio < height*yRatio){
+    if(width*xRatio*2 < height*yRatio){
       let yScale = height/(_dimension[1]+2);
       let yOffset = 1;
       let xScale = yScale*2;
@@ -33,8 +34,6 @@ class Maze {
     }
   }
 }
-
-
 
 function findPortals(_mazeMap){
   let portals = [];
@@ -71,7 +70,12 @@ function loadLevels(_data){
     for(let i=0; i<enemyNumber; i++){
       enemies.push(new Enemy(_data.shift().split(",", 2).map(Number)));
     }
-    levels.push(new Maze(i, mazeMap, dimension, start, end, enemies));
+    let powerUps = [];
+    let powerUpNumber = _data.shift();
+    for(let i=0; i<powerUpNumber; i++){
+      powerUps.push(new PowerUp(_data.shift().split(",", 2).map(Number)));
+    }
+    levels.push(new Maze(i, mazeMap, dimension, start, end, enemies, powerUps));
   }
   return levels;
 }
