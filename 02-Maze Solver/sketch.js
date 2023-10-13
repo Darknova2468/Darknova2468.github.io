@@ -25,7 +25,6 @@ function preload(){
 }
 function setup() {
   resizeCanvas(600, 300); 
-  console.log(levels);
   //https://coolors.co/palette/f0ead2-dde58f-adc178-a98467-6c584c
 }
 
