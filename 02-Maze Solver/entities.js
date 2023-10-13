@@ -27,9 +27,6 @@ class Player{
         }
       }
     }
-    //5,6 8,6 6,3 1,4
-
-    
     let pointer;
     let cases = [
       [0, 1],
@@ -51,8 +48,8 @@ class Player{
       [0, 1],
       [-1,0]
     ];
-    let playerX = _maze.cellSize[0]*(this.pos[0]+_maze.offset[0]+0.5*((this.pos[1]+1)%2));
-    let playerY = _maze.cellSize[1]*(this.pos[1]+_maze.offset[1]);
+    let playerX = _maze.cellSize[0]*(this.pos[0]+_maze.offset[0]+0.5*((this.pos[1]+1)%2))+_maze.cellSize[1];
+    let playerY = _maze.cellSize[1]*(this.pos[1]+_maze.offset[1])+_maze.cellSize[1]/1.25;
     let magnitude = dist(playerX, playerY, mouseX, mouseY);
     let theta = Math.atan((mouseX-playerX)/(mouseY-playerY));
     if(magnitude <= 2*_maze.cellSize[0]){
