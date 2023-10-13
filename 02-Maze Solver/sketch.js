@@ -7,6 +7,7 @@
 
 let levels;
 let textures;
+let playerState = true;
 
 function preload(){
   createCanvas(600, 300);
@@ -50,7 +51,7 @@ function drawMaze(_maze, _textures){
   ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1], _maze.cellSize[1]*0.5);
 
   //draw players next move;
-  if(_maze.player.nextPos !== null){
+  if(_maze.player.nextPos !== null && playerState){
     let [x, y] = worldToScreen(_maze.player.nextPos, _maze.cellSize, _maze.offset);
     fill(0, 255, 0);
     ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1], _maze.cellSize[1]/2);
@@ -68,33 +69,39 @@ function drawMaze(_maze, _textures){
 
 function mouseReleased(){
   //moves player and enemies;
-  if(levels.mazes[levels.currentMaze].player.nextPos !== null){
+  if(levels.mazes[levels.currentMaze].player.nextPos !== null && playerState){
     let currentMaze = levels.mazes[levels.currentMaze];
     currentMaze.player.updatePos();
-    for(let i=0; i<levels.mazes[levels.currentMaze].enemies.length; i++){
-      currentMaze.enemies[i].updatePos(
-        currentMaze.graph, 
-        currentMaze.player.pos, 
-        currentMaze.dimension);
-    }
-    //checks if you have beat the level
-    if(currentMaze.end[0] === currentMaze.player.pos[0] &&
-       currentMaze.end[1] === currentMaze.player.pos[1] &&
-      levels.currentMaze + 1 < levels.mazeNumbers){
-      levels.currentMaze++;
-    }
-    for(let i=0; i<currentMaze.enemies.length; i++){
-      if(currentMaze.player.pos[0] === currentMaze.enemies[i].pos[0] &&
-        currentMaze.player.pos[1] === currentMaze.enemies[i].pos[1]){
-        resetMaze();
-        break;
+    playerState = false;
+    sleep(200).then(() =>{
+      for(let i=0; i<levels.mazes[levels.currentMaze].enemies.length; i++){
+        currentMaze.enemies[i].updatePos(
+          currentMaze.graph, 
+          currentMaze.player.pos, 
+          currentMaze.dimension);
       }
-    }
+      playerState = true;
+      //checks if you are dead
+      for(let i=0; i<currentMaze.enemies.length; i++){
+        if(currentMaze.player.pos[0] === currentMaze.enemies[i].pos[0] &&
+          currentMaze.player.pos[1] === currentMaze.enemies[i].pos[1]){
+          resetMaze();
+          break;
+        }
+      }  
+      //checks if you have beat the level
+      if(currentMaze.end[0] === currentMaze.player.pos[0] &&
+        currentMaze.end[1] === currentMaze.player.pos[1] &&
+       levels.currentMaze + 1 < levels.mazeNumbers){
+        levels.currentMaze++;
+      }
+    });
   }
 }
 
 function keyTyped(){
-  if(key === "r"){
+  //Key binds for reset, and nextMaze
+  if(keyCode === 82){
     resetMaze();
   }
   if(keyCode === 13){
@@ -117,4 +124,8 @@ function resetMaze(){
   for(let i=0; i<currentMaze.enemies.length; i++){
     currentMaze.enemies[i].pos = currentMaze.enemies[i].start;
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
