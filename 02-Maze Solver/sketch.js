@@ -10,7 +10,9 @@ let textures;
 let gameState = 0;
 let playerState = true;
 let startButtons;
+let levelButtons;
 let endButtons;
+let backgrounds;
 
 function preload(){
   createCanvas(600, 300);
@@ -28,21 +30,26 @@ function preload(){
     text: ["Play", "Tutorial", "Level Select"],
     buttons: createButtons(3, width/2, height/8, height/6)
   };
+  levelButtons = {
+    text: ["<"],
+    buttons: [width*7/8, height/4, 50]
+  };
   endButtons = {
     text: ["Back to Home"],
     buttons: createButtons(1, width/2, height/8, height/6)
   };
+  backgrounds = [192, color(0, 192, 236), 192];
 }
 function setup() {
-  console.log(endButtons);
+  console.log(levels);
+  console.log(textures);
   resizeCanvas(600, 300); 
   frameRate(24); 
-  textAlign(CENTER); 
-  //https://coolors.co/palette/f0ead2-dde58f-adc178-a98467-6c584c
+  textAlign(CENTER);
 }
 
 function draw() {
-  background(220);
+  background(backgrounds[gameState]);
   if(gameState === 0){
     startScreen();
   }
@@ -175,9 +182,11 @@ function drawMaze(_maze, _textures){
   //draws map;
   for(let j=0; j<_maze.dimension[1]; j++){
     for(let i=0; i<_maze.dimension[0]; i++){
-      if(_maze.mazeMap[i][j] !== 0){
+      if(_maze.textureMap[i][j] !== null){
         let [x, y] = worldToScreen([i,j], _maze.cellSize, _maze.offset);
-        image(_textures[_maze.mazeMap[i][j]], x, y, _maze.cellSize[0], _maze.cellSize[0]);
+        for(let k=0; k<_maze.textureMap[i][j].length; k++){
+          image(_textures[_maze.textureMap[i][j][k]], x, y, _maze.cellSize[0], _maze.cellSize[0]);
+        }
       }
     }
   }
@@ -217,7 +226,7 @@ function drawMaze(_maze, _textures){
   for(let i=0; i<_maze.powerUps.length; i++){
     if(_maze.powerUps[i].grabbed === false){
       let [x, y] = worldToScreen(_maze.powerUps[i].pos, _maze.cellSize, _maze.offset);
-      ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1]*0.75, _maze.cellSize[1]*0.33);
+      image(_textures[2], x, y, _maze.cellSize[0], _maze.cellSize[0]);
     }
   }
 }
@@ -246,7 +255,7 @@ function sleep(_ms) {
   return new Promise(resolve => setTimeout(resolve, _ms));
 }
 
-function endScreen(){4
+function endScreen(){
   //draws end screen
   textSize(50);
   text("YOU WIN", width/2, height/3);

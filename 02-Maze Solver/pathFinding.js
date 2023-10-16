@@ -116,7 +116,6 @@ class Graph {
         this.nodes[i].prevNode = 0;
       }
     }
-
     return result;
   }
 }

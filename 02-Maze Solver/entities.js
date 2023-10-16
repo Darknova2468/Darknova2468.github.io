@@ -18,15 +18,6 @@ class Player{
       x = Math.floor(x);
       y = Math.floor(y);
       if(x>=0 && x<_maze.dimension[0] && y>=0 && y<_maze.dimension[1]){
-        if(this.powerUp === true){
-          for(let i=0;i<_maze.enemies.length; i++){
-            if(_maze.enemies[i].pos[0] === x && 
-                 _maze.enemies[i].pos[1] === y){
-              this.nextPos = [x, y, true, i];
-              return [x, y, true, i];
-            }
-          }
-        }
         for(let i=0;i<_maze.playerPortals.length; i++){
           if(_maze.playerPortals[i][0] === x && 
                _maze.playerPortals[i][1] === y &&
@@ -87,6 +78,19 @@ class Player{
       }
       if(x< _maze.dimension[0] && x>=0 && y<_maze.dimension[1] && y>= 0){
         if(_maze.mazeMap[x][y] !== 0 && _maze.mazeMap[x][y] !== 2){
+          for(let i=0;i<_maze.enemies.length; i++){
+            if(_maze.enemies[i].pos[0] === x && 
+                   _maze.enemies[i].pos[1] === y){
+              if(this.powerUp === true){
+                this.nextPos = [x, y, true, i];
+                return [x, y, true, i];
+              } 
+              else{
+                this.nextPos = null;
+                return null;
+              }
+            }
+          }
           this.nextPos = [x, y, false];
           return [x, y, false];
         }
