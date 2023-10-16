@@ -11,8 +11,7 @@ class Player{
   castNext(_maze){
     //equations found with chatgpt
     if(_maze.mazeMap[_maze.player.pos[0]][_maze.player.pos[1]] === 6 ||
-       _maze.mazeMap[_maze.player.pos[0]][_maze.player.pos[1]] === 7 ||
-       this.powerUp){
+       _maze.mazeMap[_maze.player.pos[0]][_maze.player.pos[1]] === 7){
       let y = mouseY/_maze.cellSize[1]-_maze.offset[1];
       let x = (mouseX-_maze.cellSize[0]*_maze.offset[0]-0.5*_maze.cellSize[0]*((y+1)%2)) / _maze.cellSize[0];
       x = Math.floor(x);
@@ -21,8 +20,8 @@ class Player{
         for(let i=0;i<_maze.playerPortals.length; i++){
           if(_maze.playerPortals[i][0] === x && 
                _maze.playerPortals[i][1] === y &&
-               _maze.player.pos[0] !== x &&
-               _maze.player.pos[1] !== y){
+               (_maze.player.pos[0] !== x ||
+               _maze.player.pos[1] !== y)){
             this.nextPos = [x, y, false];
             return [x, y, false];
           }
