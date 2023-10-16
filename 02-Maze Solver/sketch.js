@@ -15,7 +15,7 @@ let endButtons;
 let backgrounds;
 
 function preload(){
-  createCanvas(600, 300);
+  createCanvas(800, 400);
   loadImage("Textures.png", function(texturePack){ 
     textures = loadTextures(texturePack, [32,32]);
   });
@@ -43,7 +43,7 @@ function preload(){
 function setup() {
   console.log(levels);
   console.log(textures);
-  resizeCanvas(600, 300); 
+  resizeCanvas(800, 400); 
   frameRate(24); 
   textAlign(CENTER);
 }
