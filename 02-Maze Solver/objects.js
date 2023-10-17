@@ -281,6 +281,7 @@ class Buttons{
       },
       function(_levels) {
         _levels.gameState = 0;
+        _levels.resetMaze();
       },
       function(_levels) {
         _levels.gameState = 0;
@@ -293,7 +294,7 @@ class Buttons{
       [width/4, height/3+height/6, width/2, height/8],
       [width/4, height/3+2*height/6, width/2, height/8],
       [width*11/12, height/6, height/6],
-      [width/4, height/3, width/2, height/15]
+      [width/4, height/3, width/2, height/8]
     ];
   }
   draw(_gameState){
