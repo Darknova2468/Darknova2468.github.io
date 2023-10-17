@@ -10,21 +10,9 @@ class node {
 class Graph {
   constructor(_mazeMap, _dimension) {
     this.dimension = _dimension;
-    let case1 = [
-      [-1, 1],
-      [0, 1],
-      [1, 0],
-      [0, -1],
-      [-1, -1],
-      [-1, 0]
-    ];
-    let case2 = [
-      [0, 1],
-      [1, 1],
-      [1, 0],
-      [0,-1],
-      [1, -1],
-      [-1, 0]
+    let direction = [
+      [[0, 1],[1, 1],[1, 0],[0,-1],[1, -1],[-1, 0]],
+      [[-1, 1],[0, 1],[1, 0],[0, -1],[-1, -1],[-1, 0]]
     ];
     let portals = [];
     this.nodes = [];
@@ -36,15 +24,8 @@ class Graph {
             portals.push(cNode.id);
           }
           for(let k=0; k<6; k++){
-            let x; let y;
-            if(j%2 === 1){
-              x = i + case1[k][0];
-              y = j + case1[k][1];
-            }
-            else {
-              x = i + case2[k][0];
-              y = j + case2[k][1];
-            }
+            let x = i + direction[j%2][k][0];
+            let y = j + direction[j%2][k][1];
             let id = x*_dimension[1]+y;
             if(x< _dimension[0] && x>=0 && y<_dimension[1] && y>= 0){
               if(_mazeMap[x][y] !== 0 && _mazeMap[x][y] !== 2){
@@ -59,11 +40,10 @@ class Graph {
         }
       }
     }
-    for(let i=0; i<portals.length; i++){
-      let id = portals[i];
-      for(let j=0; j<portals.length; j++){
-        if(portals[j] !== id){
-          this.nodes[portals[i]].edges.push([portals[j], 1]);
+    for(let id of portals){
+      for(let link of portals){
+        if(link !== id){
+          this.nodes[id].edges.push([link, 1]);
         }
       }
     }

@@ -21,7 +21,7 @@ function preload(){
   });
   loadStrings("levels.txt", function(data){
     levels = {
-      mazes: loadLevels(data, ),
+      mazes: loadLevels(data),
       currentMaze: 0,
       mazeNumbers: 6
     };
@@ -30,19 +30,13 @@ function preload(){
     text: ["Play", "Tutorial", "Level Select"],
     buttons: createButtons(3, width/2, height/8, height/6)
   };
-  levelButtons = {
-    text: ["<"],
-    buttons: [width*7/8, height/4, 50]
-  };
   endButtons = {
     text: ["Back to Home"],
     buttons: createButtons(1, width/2, height/8, height/6)
   };
-  backgrounds = [192, color(0, 192, 236), 192];
+  backgrounds = [223, color(0, 192, 236), 223];
 }
 function setup() {
-  console.log(levels);
-  console.log(textures);
   resizeCanvas(800, 400); 
   frameRate(24); 
   textAlign(CENTER);
@@ -68,9 +62,16 @@ function keyTyped(){
   if(keyCode === 82){
     resetMaze();
   }
-  if(keyCode === 13){
-    if(levels.currentMaze + 1 < levels.mazeNumbers){
-      levels.currentMaze++;
+  if(levels.currentMaze > 0){
+    if(keyCode === 13){
+      if(levels.currentMaze + 1 < levels.mazeNumbers){
+        levels.currentMaze++;
+      }
+    }
+    if(keyCode === 66){
+      if(levels.currentMaze - 1 > 0){
+        levels.currentMaze--;
+      }
     }
   }
 }
@@ -205,24 +206,10 @@ function drawMaze(_maze, _textures){
   //draw players next move;
   if(_maze.player.nextPos !== null && playerState){
     let [x, y] = worldToScreen(_maze.player.nextPos, _maze.cellSize, _maze.offset);
-    if(_maze.player.nextPos[2] === true){
-      fill(255, 0, 0);
-    }
-    else {
-      fill(0, 255, 0);
-    }
-    ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1], _maze.cellSize[1]/2);
-    if(_maze.player.nextPos[2] === true){
-      fill(255, 165, 0);
-    }
-    else {
-      fill(192);
-    }
-    ellipse(x+_maze.cellSize[1], y+_maze.cellSize[1]/1.25, _maze.cellSize[1]/2, _maze.cellSize[1]/4);
+    image(_textures[7+(_maze.player.nextPos[2] === true)], x, y, _maze.cellSize[0], _maze.cellSize[0]);
   }
 
   //draws PowerUps
-  fill(128, 0, 128);
   for(let i=0; i<_maze.powerUps.length; i++){
     if(_maze.powerUps[i].grabbed === false){
       let [x, y] = worldToScreen(_maze.powerUps[i].pos, _maze.cellSize, _maze.offset);

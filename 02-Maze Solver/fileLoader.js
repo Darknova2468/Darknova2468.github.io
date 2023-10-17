@@ -1,11 +1,11 @@
 class Maze {
-  constructor(_id, _mazeMap, _textureMap, _dimension, _player, _end, _enemies, _powerUps){
+  constructor(_id, _mazeMap, _textureMap, _dimension, _player, _end, _enemies, _portals, _powerUps){
     this.id = _id;
     this.mazeMap = _mazeMap;
     this.textureMap = _textureMap;
     this.dimension = _dimension;
     this.player = _player;
-    this.playerPortals = findPortals(_mazeMap);
+    this.playerPortals = _portals;
     this.end = _end;
     this.enemies = _enemies;
     this.graph = new Graph(this.mazeMap, this.dimension);
@@ -36,18 +36,6 @@ class Maze {
   }
 }
 
-function findPortals(_mazeMap){
-  let portals = [];
-  for(let i=0; i<_mazeMap.length; i++){
-    for(let j=0; j<_mazeMap.length; j++){
-      if(_mazeMap[i][j] === 6 || _mazeMap[i][j] === 7){
-        portals.push([i,j]);
-      }
-    }
-  }
-  return portals;
-}
-
 function loadLevels(_data){
   let direction = [
     [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,0]],
@@ -68,18 +56,6 @@ function loadLevels(_data){
         mazeMap[k][j] = row.shift();
       }
     }
-    let start = new Player(_data.shift().split(",", 2).map(Number));
-    let end = _data.shift().split(",", 2).map(Number);
-    let enemies = [];
-    let enemyNumber =_data.shift();
-    for(let i=0; i<enemyNumber; i++){
-      enemies.push(new Enemy(_data.shift().split(",", 2).map(Number)));
-    }
-    let powerUps = [];
-    let powerUpNumber = _data.shift();
-    for(let i=0; i<powerUpNumber; i++){
-      powerUps.push(new PowerUp(_data.shift().split(",", 2).map(Number)));
-    }
     let textureMap = new Array(dimension[0]);
     for(let j=0; j<textureMap.length; j++){
       textureMap[j] = new Array(dimension[1]).fill(null);
@@ -94,13 +70,20 @@ function loadLevels(_data){
             let y = k+direction[k%2][l][1];
             if(x >= 0 && x <dimension[0] &&
                y >= 0 && y <dimension[1]){
-              if(mazeMap[x][y] === 2){
-                textureMap[j][k].push(l+7);
+              if(mazeMap[x][y] === 2 ||
+                 mazeMap[x][y] === 0){
+                textureMap[j][k].push(l+9);
               }
+            }
+            else {
+              textureMap[j][k].push(l+9);
             }
           }
           if(mazeMap[j][k] === 4) {
             textureMap[j][k].push(3);
+          }
+          if(mazeMap[j][k] === 5) {
+            textureMap[j][k].push(17);
           }
           if(mazeMap[j][k] > 5){
             textureMap[j][k].push(mazeMap[j][k]-2);
@@ -108,13 +91,47 @@ function loadLevels(_data){
         }
         if(mazeMap[j][k] === 2){
           textureMap[j][k] = [0];
-          if(random() > 0.4){
-            textureMap[j][k].push(13);
+          if(random() < 0.3){
+            textureMap[j][k].push(15);
+          }
+          else if(random() > 0.7){
+            textureMap[j][k].push(16);
           }
         }
       }
     }
-    levels.push(new Maze(i, mazeMap, textureMap, dimension, start, end, enemies, powerUps));
+    let start = new Player(_data.shift().split(",", 2).map(Number));
+    let end = _data.shift().split(",", 2).map(Number);
+    let enemies = [];
+    let enemyNumber =_data.shift();
+    for(let i=0; i<enemyNumber; i++){
+      enemies.push(new Enemy(_data.shift().split(",", 2).map(Number)));
+    }
+    let powerUps = [];
+    let powerUpNumber = _data.shift();
+    for(let i=0; i<powerUpNumber; i++){
+      powerUps.push(new PowerUp(_data.shift().split(",", 2).map(Number)));
+    }
+    let portals = [];
+    for(let i=0; i<mazeMap.length; i++){
+      for(let j=0; j<mazeMap.length; j++){
+        if(mazeMap[i][j] === 6 || mazeMap[i][j] === 7){
+          portals.push([i,j]);
+        }
+      }
+    }
+    levels.push(new Maze(i, mazeMap, textureMap, dimension, start, end, enemies, portals, powerUps));
   }
   return levels;
+}
+
+function loadTextures(_texturePack, _size){
+  let assets = [];
+  for(let j=0; j<_texturePack.height; j+= _size[1]){
+    for(let i=0; i<_texturePack.width; i+= _size[0]){
+      let newAsset = _texturePack.get(i, j, _size[0], _size[1]);
+      assets.push(newAsset);
+    }
+  }
+  return assets;
 }
