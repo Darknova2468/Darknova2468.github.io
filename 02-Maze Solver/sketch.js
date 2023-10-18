@@ -1,9 +1,11 @@
-// Project Title
-// Your Name
-// Date
+// Escape the Island
+// Alexander Ha
+// October 9 2023
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - I did some cool things with saving things in text files, 
+//   parsing through textures classes some other fun things 
+//   'n' what not IDK I think its pretty cool
 
 let levels;
 let textures;
@@ -13,15 +15,15 @@ let backgrounds;
 function preload(){
   createCanvas(800, 400);
   loadImage("Textures.png", function(texturePack){ 
-    textures = loadTextures(texturePack, [32,32]);
+    textures = new Textures(texturePack, [32, 32]);
   });
 
   loadStrings("levels.txt", function(data){
     levels = new Levels(data, 0);
   });
-
-  buttons = new Buttons();
-
+  loadImage("Buttons.png", function(buttonTextures){
+    buttons = new Buttons(buttonTextures);
+  });
   backgrounds = [223, color(0, 192, 236), 223];
 }
 
@@ -35,7 +37,7 @@ function draw() {
   buttons.draw(levels.gameState);
   if(levels.gameState === 1){
     levels.mazes[levels.currentMaze].player.castNext(levels.mazes[levels.currentMaze]);
-    levels.draw(levels.mazes[levels.currentMaze], textures, levels.playerState);
+    levels.draw(levels.mazes[levels.currentMaze], textures.assets , levels.playerState);
   }
 }
 
@@ -47,11 +49,13 @@ function keyTyped(){
   if(levels.currentMaze > 0){
     if(keyCode === 13){
       if(levels.currentMaze + 1 < levels.n){
+        levels.resetMaze();
         levels.currentMaze++;
       }
     }
     if(keyCode === 66){
       if(levels.currentMaze - 1 > 0){
+        levels.resetMaze();
         levels.currentMaze--;
       }
     }

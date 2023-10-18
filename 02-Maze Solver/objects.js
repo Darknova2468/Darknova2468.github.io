@@ -247,26 +247,20 @@ class Maze {
   }
 }
 
-function loadTextures(_texturePack, _size){
-  let assets = [];
-  for(let j=0; j<_texturePack.height; j+= _size[1]){
-    for(let i=0; i<_texturePack.width; i+= _size[0]){
-      let newAsset = _texturePack.get(i, j, _size[0], _size[1]);
-      assets.push(newAsset);
+class Textures{
+  constructor(_texturePack, _size){
+    this.assets = [];
+    for(let j=0; j<_texturePack.height; j+= _size[1]){
+      for(let i=0; i<_texturePack.width; i+= _size[0]){
+        let newAsset = _texturePack.get(i, j, _size[0], _size[1]);
+        this.assets.push(newAsset);
+      }
     }
   }
-  return assets;
 }
 
 class Buttons{
-  constructor() {
-    this.text = [
-      "Play",
-      "Tutorial",
-      "Level Select",
-      "<",
-      "Back to Home"      
-    ];
+  constructor(_textures) {
     this.functions = [
       function(_levels) {
         _levels.currentMaze = 1;
@@ -288,50 +282,58 @@ class Buttons{
       }
     ];
     this.state = [0,0,0,1,2];
-    this.type = [0,0,0,1,0];
+    this.textureProperties = [
+      [72,9,true],
+      [72,9,true],
+      [72,9,true],
+      [18,18,false],
+      [72,9,true]
+    ];
     this.dimensions = [
       [width/4, height/3, width/2, height/8],
       [width/4, height/3+height/6, width/2, height/8],
       [width/4, height/3+2*height/6, width/2, height/8],
-      [width*11/12, height/6, height/6],
+      [width*21/24, height/12, height/6, height/6],
       [width/4, height/3, width/2, height/8]
     ];
+    this.loadButtons(_textures, this.textureProperties);
+  }
+  loadButtons(_textures, _properties){
+    this.textures = [];
+    let [x, y] = [0, 0];
+    for(let i = 0; x < _textures.width && y < _textures.height; i++){
+      x=0;
+      let newAsset = [];
+      newAsset.push(_textures.get(x, y, _properties[i][0], _properties[i][1])); 
+      if(_properties[i][2]){
+        y+=_properties[i][1];
+      }
+      else{
+        x+=_properties[i][0];
+      }
+      newAsset.push(_textures.get(x, y, _properties[i][0], _properties[i][1]));
+      this.textures.push(newAsset);
+      y+=_properties[i][1];
+    }
+    console.log(this.textures);
   }
   draw(_gameState){
     textAlign(CENTER);
     textSize(height/10); 
-    for(let i=0; i<this.text.length; i++){
+    for(let i=0; i<this.textures.length; i++){
       if(this.state[i] === _gameState){
-        fill(192);
-        if(this.type[i] === 0){
-          let [x, y, w, h] = this.dimensions[i];
-          rect(x, y, w, h, h*0.25);
-          fill(0);
-          text(this.text[i], x+w/2, y+h*0.75);
-        }
-        else {
-          let [x, y, r] = this.dimensions[i];
-          circle(x, y, r);
-          fill(0);
-          text(this.text[i], x, y+r/4);
-        }
+        let [x, y, w, h] = this.dimensions[i];
+        let hover = 1*(mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h);
+        image(this.textures[i][hover], x, y, w , h);
       }
     }
   }
   clicked(_levels){
     for(let i=0; i<this.functions.length; i++){
       if(this.state[i] === _levels.gameState){
-        if(this.type[i] === 0){
-          let [x, y, w, h] = this.dimensions[i];
-          if(mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h){
-            this.functions[i](_levels);
-          }
-        }
-        else {
-          let [x, y, r] = this.dimensions[i];
-          if(dist(mouseX, mouseY, x, y) < r){
-            this.functions[i](_levels);
-          }
+        let [x, y, w, h] = this.dimensions[i];
+        if(mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h){
+          this.functions[i](_levels);
         }
       }
     }
