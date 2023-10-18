@@ -223,27 +223,26 @@ class Maze {
     this.cellSize;
     this.offset;
     this.powerUps = _powerUps;
-    this.autoScale(_dimension);
+    this.autoScale(_dimension, _mazeMap);
   }
-  autoScale(_dimension) {
-    let xRatio = (_dimension[1]+2)/(_dimension[0]+2.5);
-    let yRatio = (_dimension[0]+2.5)/(_dimension[1]+2);
-    if(width*xRatio*2 < height*yRatio){
-      let yScale = height/(_dimension[1]+2);
-      let yOffset = 1;
-      let xScale = yScale*2;
-      let xOffset = (width-xScale*_dimension[0])/(1.25*xScale);
-      this.cellSize = [xScale, yScale];
-      this.offset = [xOffset, yOffset];
+  autoScale(_dimension, _mazeMap) {
+    let sum = 0;
+    for(let i=0; i<_mazeMap[0].length; i+=2){
+      sum += _mazeMap[_mazeMap.length-1][i];
     }
-    else{
-      let xScale = width/(_dimension[0]+2.5);
-      let xOffset = 1.5;
-      let yScale = xScale/2;
-      let yOffset = (height-yScale*_dimension[1])/(1.5*yScale);
-      this.cellSize = [xScale, yScale];
-      this.offset = [xOffset, yOffset];
+    let xOffset, yOffset, xScale;
+    xScale = width/(_dimension[0]+2.5);
+    if(2*height/(_dimension[1]+3) < xScale){
+      xScale = 2*height/(_dimension[1]+3);
+      yOffset = 1;
+      xOffset = (width-xScale*(_dimension[0]+0.5*(sum>0)))/(2*xScale);
     }
+    else {
+      xOffset = 1+0.25*(sum===0);
+      yOffset = (4*width-xScale*(_dimension[0]+1))/(24*xScale);
+    }
+    this.offset = [xOffset, yOffset];
+    this.cellSize = [xScale, xScale*0.5];
   }
 }
 
@@ -302,9 +301,8 @@ class Buttons{
     this.textures = [];
     let [x, y] = [0, 0];
     for(let i = 0; x < _textures.width && y < _textures.height; i++){
-      x=0;
       let newAsset = [];
-      newAsset.push(_textures.get(x, y, _properties[i][0], _properties[i][1])); 
+      newAsset.push(_textures.get(x = 0, y, _properties[i][0], _properties[i][1])); 
       if(_properties[i][2]){
         y+=_properties[i][1];
       }
