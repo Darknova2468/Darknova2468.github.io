@@ -44,18 +44,18 @@ function draw() {
 function keyTyped(){
   //Key binds for reset, prevMaze, and nextMaze
   if(keyCode === 82){
-    levels.resetMaze();
+    levels.resetMaze(levels.currentMaze);
   }
   if(levels.currentMaze > 0){
     if(keyCode === 13){
       if(levels.currentMaze + 1 < levels.n){
-        levels.resetMaze();
+        levels.resetMaze(levels.currentMaze);
         levels.currentMaze++;
       }
     }
     if(keyCode === 66){
       if(levels.currentMaze - 1 > 0){
-        levels.resetMaze();
+        levels.resetMaze(levels.currentMaze);
         levels.currentMaze--;
       }
     }

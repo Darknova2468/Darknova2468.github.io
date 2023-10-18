@@ -131,7 +131,7 @@ class Levels {
   resetMaze(_n){
     let currentMaze = this.mazes[_n];
     //resets player power ups and enemy pos;
-    currentMaze.player.pos = currentMaze.player.start;
+    currentMaze.player.pos = structuredClone(currentMaze.player.start);
     for(let i=0; i<currentMaze.enemies.length; i++){
       currentMaze.enemies[i].pos = currentMaze.enemies[i].start;
     }
@@ -174,7 +174,7 @@ class Levels {
         for(let i=0; i<currentMaze.enemies.length; i++){
           if(currentMaze.player.pos[0] === currentMaze.enemies[i].pos[0] &&
             currentMaze.player.pos[1] === currentMaze.enemies[i].pos[1]){
-            this.resetMaze(currentMaze);
+            this.resetMaze(this.currentMaze);
             break;
           }
         }  
@@ -192,15 +192,15 @@ class Levels {
         if(currentMaze.end[0] === currentMaze.player.pos[0] &&
           currentMaze.end[1] === currentMaze.player.pos[1]){
           if(this.currentMaze === 0){
-            this.resetMaze(currentMaze);
+            this.resetMaze(this.currentMaze);
             this.gameState = 0;
           }
           else if(this.currentMaze + 1 < this.n){
-            this.resetMaze(currentMaze);
+            this.resetMaze(this.currentMaze);
             this.currentMaze++;
           }
           else {
-            this.resetMaze(currentMaze);
+            this.resetMaze(this.currentMaze);
             this.gameState = 2;
           }
         }
@@ -315,7 +315,6 @@ class Buttons{
       this.textures.push(newAsset);
       y+=_properties[i][1];
     }
-    console.log(this.textures);
   }
   draw(_gameState){
     textAlign(CENTER);
