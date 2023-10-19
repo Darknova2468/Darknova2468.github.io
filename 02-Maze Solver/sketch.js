@@ -34,11 +34,11 @@ function setup() {
 
 function draw() {
   background(backgrounds[levels.gameState]);
-  buttons.draw(levels.gameState);
   if(levels.gameState === 1){
     levels.mazes[levels.currentMaze].player.castNext(levels.mazes[levels.currentMaze]);
     levels.draw(levels.mazes[levels.currentMaze], textures.assets , levels.playerState);
   }
+  buttons.draw(levels.gameState);
 }
 
 function keyTyped(){

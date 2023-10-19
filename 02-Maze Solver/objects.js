@@ -19,50 +19,6 @@ class Levels {
           mazeMap[k][j] = row.shift();
         }
       }
-      let textureMap = new Array(dimension[0]);
-      for(let j=0; j<textureMap.length; j++){
-        textureMap[j] = new Array(dimension[1]).fill(null);
-      }
-      for(let j=0; j<dimension[0]; j++){
-        for(let k=0; k<dimension[1]; k++){
-          if(mazeMap[j][k] === 1 ||
-             mazeMap[j][k] > 2){
-            textureMap[j][k] = [1];
-            for(let l=0; l<6; l++){
-              let x = j+direction[k%2][l][0];
-              let y = k+direction[k%2][l][1];
-              if(x >= 0 && x <dimension[0] &&
-                 y >= 0 && y <dimension[1]){
-                if(mazeMap[x][y] === 2 ||
-                   mazeMap[x][y] === 0){
-                  textureMap[j][k].push(l+9);
-                }
-              }
-              else {
-                textureMap[j][k].push(l+9);
-              }
-            }
-            if(mazeMap[j][k] === 4) {
-              textureMap[j][k].push(3);
-            }
-            if(mazeMap[j][k] === 5) {
-              textureMap[j][k].push(17);
-            }
-            if(mazeMap[j][k] > 5){
-              textureMap[j][k].push(mazeMap[j][k]-2);
-            }
-          }
-          if(mazeMap[j][k] === 2){
-            textureMap[j][k] = [0];
-            if(random() < 0.3){
-              textureMap[j][k].push(15);
-            }
-            else if(random() > 0.7){
-              textureMap[j][k].push(16);
-            }
-          }
-        }
-      }
       let start = new Player(_data.shift().split(",", 2).map(Number));
       let end = _data.shift().split(",", 2).map(Number);
       let enemies = [];
@@ -83,7 +39,7 @@ class Levels {
           }
         }
       }
-      this.mazes.push(new Maze(i, mazeMap, textureMap, dimension, start, end, enemies, portals, powerUps));
+      this.mazes.push(new Maze(i, mazeMap, dimension, start, end, enemies, portals, powerUps));
     }
     this.currentMaze = 0;
     this.n = 6;
@@ -92,12 +48,17 @@ class Levels {
   }
   draw(_maze, _textures){
   //draws map;
-    for(let j=0; j<_maze.dimension[1]; j++){
-      for(let i=0; i<_maze.dimension[0]; i++){
+    for(let j=0; j<_maze.textureMap[0].length; j++){
+      for(let i=0; i<_maze.textureMap.length; i++){
         if(_maze.textureMap[i][j] !== null){
-          let [x, y] = this.worldToScreen([i,j], _maze.cellSize, _maze.offset);
+          let [x, y] = this.worldToScreen([i,j], _maze.cellSize, _maze.mazeOffset);
           for(let k=0; k<_maze.textureMap[i][j].length; k++){
-            image(_textures[_maze.textureMap[i][j][k]], x, y, _maze.cellSize[0], _maze.cellSize[0]);
+            if(_maze.textureMap[i][j][k] === 18){
+              image(_textures[_maze.textureMap[i][j][k]+(Math.floor(frameCount/4)+i+j)%8], x, y, _maze.cellSize[0], _maze.cellSize[0]);
+            }
+            else{
+              image(_textures[_maze.textureMap[i][j][k]], x, y, _maze.cellSize[0], _maze.cellSize[0]);
+            }
           }
         }
       }
@@ -210,10 +171,9 @@ class Levels {
 }
 
 class Maze {
-  constructor(_id, _mazeMap, _textureMap, _dimension, _player, _end, _enemies, _portals, _powerUps){
+  constructor(_id, _mazeMap, _dimension, _player, _end, _enemies, _portals, _powerUps){
     this.id = _id;
     this.mazeMap = _mazeMap;
-    this.textureMap = _textureMap;
     this.dimension = _dimension;
     this.player = _player;
     this.playerPortals = _portals;
@@ -224,6 +184,7 @@ class Maze {
     this.offset;
     this.powerUps = _powerUps;
     this.autoScale(_dimension, _mazeMap);
+    this.generateTextureMap(_mazeMap, _dimension);
   }
   autoScale(_dimension, _mazeMap) {
     let sum = 0;
@@ -243,6 +204,58 @@ class Maze {
     }
     this.offset = [xOffset, yOffset];
     this.cellSize = [xScale, xScale*0.5];
+  }
+  generateTextureMap(_mazeMap, _dimension){
+    this.textureMap = new Array(_dimension[0]+2*floor(this.offset[0]+3));
+    for(let j=0; j<this.textureMap.length; j++){
+      this.textureMap[j] = new Array(_dimension[1]+3*floor(this.offset[1]+3)).fill([18]);
+    }
+    let direction = [
+      [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,0]],
+      [[-1,-1],[0,-1],[1,0],[0,1],[-1,1],[-1,0]]
+    ];
+    for(let j=0; j<_dimension[0]; j++){
+      for(let k=0; k<_dimension[1]; k++){
+        let [a, b] = [j+floor(this.offset[0])+3, k+floor(this.offset[1])+3];
+        if(_mazeMap[j][k] === 1 ||
+           _mazeMap[j][k] > 2){
+          this.textureMap[a][b] = [1];
+          for(let l=0; l<6; l++){
+            let x = j+direction[k%2][l][0];
+            let y = k+direction[k%2][l][1];
+            if(x >= 0 && x <_dimension[0] &&
+               y >= 0 && y <_dimension[1]){
+              if(_mazeMap[x][y] === 2 ||
+                 _mazeMap[x][y] === 0){
+                this.textureMap[a][b].push(l+9);
+              }
+            }
+            else {
+              this.textureMap[a][b].push(l+9);
+            }
+          }
+          if(_mazeMap[j][k] === 4) {
+            this.textureMap[a][b].push(3);
+          }
+          if(_mazeMap[j][k] === 5) {
+            this.textureMap[a][b].push(17);
+          }
+          if(_mazeMap[j][k] > 5){
+            this.textureMap[a][b].push(_mazeMap[j][k]-2);
+          }
+        }
+        if(_mazeMap[j][k] === 2){
+          this.textureMap[a][b] = [0];
+          if(random() < 0.3){
+            this.textureMap[a][b].push(15);
+          }
+          else if(random() > 0.7){
+            this.textureMap[a][b].push(16);
+          }
+        }
+      }
+    }
+    this.mazeOffset = [this.offset[0]-floor(this.offset[0])-3, this.offset[1]-floor(this.offset[1])-3];
   }
 }
 
@@ -289,9 +302,9 @@ class Buttons{
       [72,9,true]
     ];
     this.dimensions = [
-      [width/4, height/3, width/2, height/8],
-      [width/4, height/3+height/6, width/2, height/8],
-      [width/4, height/3+2*height/6, width/2, height/8],
+      [width/4, height/2.5, width/2, height/8],
+      [width/4, height/2.5+height/6, width/2, height/8],
+      [width/4, height/2.5+2*height/6, width/2, height/8],
       [width*21/24, height/12, height/6, height/6],
       [width/4, height/3, width/2, height/8]
     ];
