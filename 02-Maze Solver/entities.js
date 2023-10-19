@@ -22,8 +22,8 @@ class Player{
                _maze.playerPortals[i][1] === y &&
                (_maze.player.pos[0] !== x ||
                _maze.player.pos[1] !== y)){
-            this.nextPos = [x, y, false];
-            return [x, y, false];
+            this.nextPos = [x, y, false, true];
+            return [x, y, false, true];
           }
         }
       }
@@ -59,8 +59,8 @@ class Player{
               return null;
             }
           }
-          this.nextPos = [x, y, false];
-          return [x, y, false];
+          this.nextPos = [x, y, false, false];
+          return [x, y, false, false];
         }
       }
     }

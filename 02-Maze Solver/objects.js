@@ -1,5 +1,5 @@
 class Levels {
-  constructor(_data, _gameState){
+  constructor(_data, _gameState, _sfx){
     let direction = [
       [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,0]],
       [[-1,-1],[0,-1],[1,0],[0,1],[-1,1],[-1,0]]
@@ -45,6 +45,8 @@ class Levels {
     this.n = 6;
     this.gameState = _gameState;
     this.playerState = true;
+    this.wait = false;
+    this.sfx = _sfx;
   }
   draw(_maze, _textures){
   //draws map;
@@ -89,15 +91,24 @@ class Levels {
       }
     }
   }
-  resetMaze(_n){
-    let currentMaze = this.mazes[_n];
-    //resets player power ups and enemy pos;
-    currentMaze.player.pos = structuredClone(currentMaze.player.start);
-    for(let i=0; i<currentMaze.enemies.length; i++){
-      currentMaze.enemies[i].pos = currentMaze.enemies[i].start;
-    }
-    for(let i=0; i<currentMaze.powerUps.length; i++){
-      currentMaze.powerUps[i].grabbed = false;
+  resetMaze(_n, _win){
+    if(_win !== null){
+      let currentMaze = this.mazes[_n];
+      this.wait = true;
+      this.playerState = false;
+      this.sfx.play(!_win*1);
+      this.sleep(3000).then(() =>{
+      //resets player power ups and enemy pos;
+        currentMaze.player.pos = structuredClone(currentMaze.player.start);
+        for(let i=0; i<currentMaze.enemies.length; i++){
+          currentMaze.enemies[i].pos = currentMaze.enemies[i].start;
+        }
+        for(let i=0; i<currentMaze.powerUps.length; i++){
+          currentMaze.powerUps[i].grabbed = false;
+        }
+        this.wait = false;
+        this.playerState = true;
+      });
     }
   }
   worldToScreen(_pos, _scale, _offset){
@@ -114,6 +125,13 @@ class Levels {
     if(this.mazes[this.currentMaze].player.nextPos !== null && this.playerState){
       let currentMaze = this.mazes[this.currentMaze];
       if(currentMaze.player.nextPos[2] !== true){
+        if(currentMaze.player.nextPos[3] === true){
+          this.wait = true;
+          this.sfx.play(3);
+          this.sleep(1500).then(() =>{
+            this.wait = false;
+          });
+        }
         currentMaze.player.updatePos();
       }
       //if an enemy is killed reset their spawn point
@@ -132,13 +150,32 @@ class Levels {
         }
         this.playerState = true;
         //checks if you are dead
+        let lost = false;
         for(let i=0; i<currentMaze.enemies.length; i++){
           if(currentMaze.player.pos[0] === currentMaze.enemies[i].pos[0] &&
             currentMaze.player.pos[1] === currentMaze.enemies[i].pos[1]){
-            this.resetMaze(this.currentMaze);
+            this.resetMaze(this.currentMaze, false);
+            lost = true;
             break;
           }
         }  
+        if(currentMaze.end[0] === currentMaze.player.pos[0] &&
+          currentMaze.end[1] === currentMaze.player.pos[1] && !lost){
+          if(this.currentMaze === 0){
+            this.resetMaze(this.currentMaze, true);
+            this.gameState = 0;
+          }
+          else if(this.currentMaze + 1 < this.n){
+            this.resetMaze(this.currentMaze, true);
+            this.currentMaze++;
+          }
+          else {
+            this.resetMaze(this.currentMaze, true);
+            this.gameState = 2;
+          }
+          this.wait = false;
+          this.playerState = true;
+        }
         //checks if you have grabbed a powerUp
         for(let i=0; i<currentMaze.powerUps.length; i++){
           if(currentMaze.player.pos[0] === currentMaze.powerUps[i].pos[0] &&
@@ -146,25 +183,17 @@ class Levels {
             currentMaze.powerUps[i].grabbed === false){
             currentMaze.player.powerUp = true;
             currentMaze.powerUps[i].grabbed = true;
+            this.wait = true;
+            this.playerState = false;
+            this.sfx.play(2);
+            this.sleep(2000).then(() =>{
+              this.wait = false;
+              this.playerState = true;
+            });
             break;
           }
         }  
         //checks if you have beat the level
-        if(currentMaze.end[0] === currentMaze.player.pos[0] &&
-          currentMaze.end[1] === currentMaze.player.pos[1]){
-          if(this.currentMaze === 0){
-            this.resetMaze(this.currentMaze);
-            this.gameState = 0;
-          }
-          else if(this.currentMaze + 1 < this.n){
-            this.resetMaze(this.currentMaze);
-            this.currentMaze++;
-          }
-          else {
-            this.resetMaze(this.currentMaze);
-            this.gameState = 2;
-          }
-        }
       });
     } 
   }
