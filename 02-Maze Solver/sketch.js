@@ -11,6 +11,7 @@ let levels;
 let textures;
 let buttons;
 let backgrounds;
+let startScreen;
 let theme;
 
 function preload(){
@@ -35,6 +36,7 @@ function preload(){
     buttons = new Buttons(buttonTextures);
   });
   backgrounds = [223, color(0, 192, 236), 223];
+  startScreen = loadImage("backgrounds'.png");
   loadSound("03 Title Screen.mp3", function(song1){
     loadSound("10 Battle! (Trainer Battle).mp3", function(song2){
       loadSound("53 Ending.mp3", function(song3){
@@ -52,9 +54,23 @@ function setup() {
 function draw() {
   background(backgrounds[levels.gameState]);
   theme.play(levels.gameState, levels.wait);
-  if(levels.gameState === 1){
+  if(levels.gameState === 0){
+    image(startScreen, 0, 0, width, height);
+    fill(0);
+    textSize(70);
+    textAlign(CENTER);
+    text("ESCAPE THE ISLAND", width/2, height/4);
+  }
+  else if(levels.gameState === 1){
     levels.mazes[levels.currentMaze].player.castNext(levels.mazes[levels.currentMaze]);
     levels.draw(levels.mazes[levels.currentMaze], textures.assets, levels.playerState);
+  }
+  else{
+    image(startScreen, 0, 0, width, height);
+    fill(0);
+    textSize(70);
+    textAlign(CENTER);
+    text("YOU ESCAPED\nTHE ISLAND", width/2, height/4);
   }
   buttons.draw(levels.gameState);
 }

@@ -6,7 +6,7 @@ class Music{
     if(_wait){
       for(let i=0; i<this.music.length; i++){
         if(this.music[i].isPlaying()){ 
-          this.music[i].setVolume(0.4);
+          this.music[i].setVolume(0.2);
         }
       }
     }

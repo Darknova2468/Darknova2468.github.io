@@ -47,6 +47,7 @@ class Levels {
     this.playerState = true;
     this.wait = false;
     this.sfx = _sfx;
+    this.isWaiting = false;
   }
   draw(_maze, _textures){
   //draws map;
@@ -127,9 +128,13 @@ class Levels {
       if(currentMaze.player.nextPos[2] !== true){
         if(currentMaze.player.nextPos[3] === true){
           this.wait = true;
+          this.isWaiting = true;
+          this.playerState = false;
           this.sfx.play(3);
           this.sleep(1500).then(() =>{
             this.wait = false;
+            this.isWaiting = false;
+            this.playerState = true;
           });
         }
         currentMaze.player.updatePos();
@@ -148,7 +153,9 @@ class Levels {
             currentMaze.player.pos, 
             currentMaze.dimension);
         }
-        this.playerState = true;
+        if(!this.isWaiting){
+          this.playerState = true;
+        }
         //checks if you are dead
         let lost = false;
         for(let i=0; i<currentMaze.enemies.length; i++){
@@ -312,9 +319,6 @@ class Buttons{
         _levels.gameState = 1;
       },
       function(_levels) {
-        console.log("do something");
-      },
-      function(_levels) {
         _levels.gameState = 0;
         _levels.resetMaze(_levels.currentMaze);
       },
@@ -322,9 +326,8 @@ class Buttons{
         _levels.gameState = 0;
       }
     ];
-    this.state = [0,0,0,1,2];
+    this.state = [0,0,1,2];
     this.textureProperties = [
-      [72,9,true],
       [72,9,true],
       [72,9,true],
       [18,18,false],
@@ -333,9 +336,8 @@ class Buttons{
     this.dimensions = [
       [width/4, height/2.5, width/2, height/8],
       [width/4, height/2.5+height/6, width/2, height/8],
-      [width/4, height/2.5+2*height/6, width/2, height/8],
       [width*21/24, height/12, height/6, height/6],
-      [width/4, height/3, width/2, height/8]
+      [width/4, height/1.75, width/2, height/8]
     ];
     this.loadButtons(_textures, this.textureProperties);
   }
