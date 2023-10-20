@@ -42,7 +42,7 @@ class Levels {
       this.mazes.push(new Maze(i, mazeMap, dimension, start, end, enemies, portals, powerUps));
     }
     this.currentMaze = 0;
-    this.n = 6;
+    this.n = 8;
     this.gameState = _gameState;
     this.playerState = true;
     this.wait = false;
