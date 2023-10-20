@@ -91,6 +91,18 @@ class Levels {
         image(_textures[2], x, y, _maze.cellSize[0], _maze.cellSize[0]);
       }
     }
+
+    fill(0);
+    textAlign(LEFT);
+    textSize(50);
+    if(this.currentMaze === 0){
+      text("Tutorial", width/50, height/25+50);
+    }
+    else {
+      text("Level " + this.currentMaze, width/50, height/25+50);
+    }
+    textSize(25);
+    text('Press "R" to Restart', width/50, height*24/25);
   }
   resetMaze(_n, _win){
     if(_win !== null){
