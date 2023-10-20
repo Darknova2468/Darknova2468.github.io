@@ -36,7 +36,7 @@ function preload(){
     buttons = new Buttons(buttonTextures);
   });
   backgrounds = [223, color(0, 192, 236), 223];
-  startScreen = loadImage("backgrounds.png");
+  startScreen = loadImage("Backgrounds.png");
   loadSound("03 Title Screen.mp3", function(song1){
     loadSound("10 Battle! (Trainer Battle).mp3", function(song2){
       loadSound("53 Ending.mp3", function(song3){
