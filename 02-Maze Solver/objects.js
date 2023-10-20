@@ -119,6 +119,7 @@ class Levels {
         for(let i=0; i<currentMaze.powerUps.length; i++){
           currentMaze.powerUps[i].grabbed = false;
         }
+        currentMaze.player.powerUp = false;
         this.wait = false;
         this.playerState = true;
       });
