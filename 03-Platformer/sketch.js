@@ -6,9 +6,66 @@
 // - describe what you did to take this project "above and beyond"
 
 class Island{
-  constructor(_points, _tangents){
-    this.points = _points;
-    this.controls = _tangents;
+  constructor(_island){
+    this.points = this.parsePoints(_island);
+  }
+  parsePoints(_island){
+    let points = [];
+
+    for(let i=0; i<_island.length; i++){
+      if(_island[i][0] === 1){
+        points.push([i, 0]);
+        break;
+      }
+    }
+
+    let direction = 0;
+    let pos = structuredClone(points[0]);
+    pos[direction%2] += direction *0.5 < 1 ? 1:-1;
+
+    while(pos[0] !== points[0][0] || pos[1] !== points[0][1]){
+      let state = this.checkCase(_island, direction, pos);
+      if(state < 2){
+        let nextPoint = structuredClone(pos);
+        nextPoint[direction%2] += direction *0.5 < 1 ? 1:-1;
+        points.push(nextPoint);
+        direction = this.rotate(state, direction, 3);
+      }
+      pos[direction%2] += direction *0.5 < 1 ? 1:-1;
+      console.log(pos, direction);
+    }
+    console.log(points);
+    return points;
+  }
+
+  checkCase(_island, _dir, _pos){
+    for(let i=0; i<2; i++){
+      _pos[_dir%2] += _dir *0.5 < 1 ? 1:-1;
+      if(_pos[0] > -1 && _pos[0] <_island.length &&
+         _pos[1] > -1 && _pos[1] <_island[0].length){
+        if(_island[_pos[0]][_pos[1]] === i){
+          return i;
+        }
+      }
+      else {
+        return 0;
+      }
+      this.rotate(1, _dir, 3);
+    }
+    return 2;
+  }
+
+  rotate(_sign, _value, _limit){
+    if(_sign === 1){
+      if(_value === _limit){
+        return 0;
+      }
+      return _value++;
+    }
+    if(_value === 0){
+      return _limit;
+    }
+    return _value--;
   }
   draw(){
     stroke(255);
@@ -44,36 +101,12 @@ let island;
 function setup() {
   createCanvas(400, 400);
   island = new Island([
-    [1.66,0],  
-    [3,1],  
-    [5,1.33], 
-    [2,2],
-    [1.5,3],
-    [1,2],
-    [0,1.5],
-    [1,1]
-  ],[
-    [3,0],
-    [2.85,0.70],
-    [3.15,1.31],
-    [5,1],
-    [5,2],
-    [2.27,1.57],
-    [1.73,2.42],
-    [2,3],
-    [1,3],
-    [1.35,2.35],
-    [0.65, 1.65],
-    [0,2],
-    [0,1],
-    [0.71,1.41],
-    [1.29,0.59],
-    [1,0]
+    [0, 1, 1, 0, 0],
+    [1, 1, 1, 1, 1],
+    [0, 1, 0, 0, 0]
   ]);
-  console.log(island);
 }
 
 function draw() {
   background(0);
-  island.draw();
 }

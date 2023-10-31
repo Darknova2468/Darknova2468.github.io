@@ -50,6 +50,7 @@ function setup() {
   resizeCanvas(800, 400); 
   frameRate(24); 
   noSmooth();
+  console.log(levels);
 }
 
 function draw() {
