@@ -8,11 +8,20 @@
 class Ball {
   constructor(x, y){
     this.pos = [x, y];
-    this.velocity = [random(-5, 5), random(-5, 5)];
     this.radius = random(15,30);
     this.color = [Math.floor(random(0, 8)*32), Math.floor(random(0, 8)*32), Math.floor(random(0, 8)*32)];
+    this.velocity = [0, 0];
+    this.time = [random(0, 1000), random(0, 1000)];
   }
   update(Xmax, Ymax){
+    this.time[0] += deltaTime;
+    this.time[1] += deltaTime;
+
+    this.velocity[0] = noise(this.time[0]*0.0001);
+    this.velocity[1] = noise(this.time[1]*0.0001);
+    this.velocity[0] = map(this.velocity[0], 0, 1, -5, 5);
+    this.velocity[1] = map(this.velocity[1], 0, 1, -5, 5);
+  
     for(let i=0; i<2; i++){
       this.pos[i] += this.velocity[i];
     }
@@ -32,22 +41,17 @@ let myBalls = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  frameRate(1000);
 }
 
 function mouseReleased(){
-  
+  myBalls.push(new Ball(mouseX, mouseY));
 }
 
 function draw() {
-  background(220);
+  background(127);
   fill(0);
   myBalls.forEach(ball => {
     ball.update();
     ball.display();
   });
-  for(let i=0; i<100000; i++){
-    myBalls.push(new Ball(mouseX, mouseY));
-  }
-  console.log(myBalls.length, deltaTime);
 }
